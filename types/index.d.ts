@@ -14,14 +14,15 @@ export type QuizStatus = 'idle' | 'selected' | 'correct' | 'tryagain' | 'correct
  * Actions that can be sent to the reducer or sent from the reducer to be handled in a useEffects hook.
  */
 export type Action = 
-  | { type: 'startTimer', payload: undefined } 
-  | { type: 'resetTimer', payload: undefined }
-  | { type: 'stopTimer', payload: undefined }
-  | { type: 'timeOut', payload: undefined }
-  | { type: 'forceSubmission', payload: undefined }
+  | { type: 'startTimer' } 
+  | { type: 'resetTimer' }
+  | { type: 'stopTimer' }
+  | { type: 'timeOut' }
+  | { type: 'forceSubmission' }
   | { type: 'selectAnswer', payload: { answerId: string }}
   | { type: 'submitAnswer', payload: { chosenAnswerList: string[] }}
-  | { type: 'continue', payload: undefined }
+  | { type: 'continue' }
+  | { type: 'loadQuestions' }
 
 export interface IAnswerOption {
   id: string,
@@ -39,7 +40,7 @@ export interface IQuestion {
 
 export interface IQuizState {
   status: QuizStatus,
-  action?: ActionType,
+  action: Action[] | [],
   data: {
     attemptCount: number,
     currentQuestionIndex: number,

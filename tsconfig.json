@@ -12,7 +12,8 @@
     "types": [
       "react",
       "react-dom",
-      "./types"
+      "./types",
+      "jest"
     ],
     "jsx": "react-jsx",
     "target": "es5",

@@ -1,4 +1,19 @@
-import { IQuizState, Action } from "../../types"
+import { IQuizState, Action } from "../../types";
+import questionData from "./questionData";
+import { isAnswerCorrect, getStateAfterSubmittingAnswer } from "../utils";
+
+const initalQuizState: IQuizState = {
+  status: 'idle',
+  action: [
+    { type: 'startTimer' }
+  ],
+  data: {
+    attemptCount: 1,
+    currentQuestionIndex: 0,
+    questionList: questionData,
+    submittedAnswerMap: {}
+  }
+}
 
 /**
  * Handle actions when the machine status is idle.
@@ -12,21 +27,36 @@ const idleReducer = (state: IQuizState, action: Action): IQuizState => {
       return {
         ...state,
         status: 'selected',
-        action: null,
+        action: [],
       }
   }
   return state;
 }
 
+/**
+ * Handle actions when the machine status is selected.
+ * @param state 
+ * @param action 
+ * @returns 
+ */
 const selectedReducer = (state: IQuizState, action: Action): IQuizState => {
-  switch(action.type) {
-    case 'submitAnswer':
-      
-      return {
-        ...state,
-        status: 'selected',
-        action: null,
+  if (action?.type === 'submitAnswer') {
+    const currentIndex = state?.data?.currentQuestionIndex;
+    const currentQuestion = state?.data?.questionList[currentIndex];
+    const isCorrect = isAnswerCorrect(currentQuestion?.correctAnswerKeyList, action?.payload?.chosenAnswerList);
+    const hasAttemptsLeft = state?.data?.attemptCount > currentQuestion?.allowedAttemptCount;
+    return {
+      ...state,
+      status: getStateAfterSubmittingAnswer(isCorrect, hasAttemptsLeft),
+      action: [{type: 'stopTimer'}],
+      data: {
+        ...state.data,
+        submittedAnswerMap: {
+          ...state.data.submittedAnswerMap,
+          [state.data.questionList[currentIndex].id]: action.payload.chosenAnswerList
+        }
       }
+    }
   }
   return state;
 }
@@ -58,4 +88,4 @@ const quizReducer = (state: IQuizState, action: Action): IQuizState => {
 }
 
 export default quizReducer;
-export {}
+export { initalQuizState }
