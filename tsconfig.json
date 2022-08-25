@@ -1,20 +1,10 @@
 {
-  "include": [
-    "./src/**/*"
-  ],
+  "include": ["./src/**/*"],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,
-    "lib": [
-      "dom",
-      "es2015"
-    ],
-    "types": [
-      "react",
-      "react-dom",
-      "./types",
-      "jest"
-    ],
+    "lib": ["dom", "es2015"],
+    "types": ["react", "react-dom", "./types", "jest"],
     "jsx": "react-jsx",
     "target": "es5",
     "allowJs": true,
