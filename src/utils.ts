@@ -1,4 +1,4 @@
-import { QuizStatus } from "../types";
+import { QuizStatus } from '../types';
 
 /**
  * Check if answer is correct.
@@ -21,7 +21,7 @@ export const isAnswerCorrect = (
   // Create new arrays, sort, convert to strings, compare equality.
   const correct = [...correctAnswers].sort();
   const chosen = [...chosenAnswers].sort();
-  return correct.join("") === chosen.join("");
+  return correct.join('') === chosen.join('');
 };
 
 /**
@@ -35,10 +35,10 @@ export const getStateAfterSubmittingAnswer = (
   hasAttemptsLeft: boolean
 ): QuizStatus => {
   if (isCorrect) {
-    return "correct";
+    return 'correct';
   }
   if (hasAttemptsLeft) {
-    return "tryagain";
+    return 'tryagain';
   }
-  return "incorrect";
+  return 'incorrect';
 };

@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, FC, ReactNode } from "react";
+import React, { createContext, useReducer, FC, ReactNode } from 'react';
 
 const QuizContext = createContext({});
 
