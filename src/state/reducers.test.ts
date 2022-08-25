@@ -130,6 +130,7 @@ test('When in correct status and there are more questions a continue action shou
     data: {
       currentQuestionIndex: 0,
       questionList: questionData,
+      score: 0,
       submittedAnswerMap: {
         [questionData[0].id]: questionData[0].correctAnswerKeyList,
       },
@@ -142,6 +143,7 @@ test('When in correct status and there are more questions a continue action shou
     data: {
       currentQuestionIndex: 1,
       questionList: questionData,
+      score: 1,
       submittedAnswerMap: {
         [questionData[0].id]: questionData[0].correctAnswerKeyList,
       },
@@ -161,15 +163,17 @@ test('When in correct status and there are no more questions a continue action s
     action: [{ type: 'stopTimer' }],
     data: {
       currentQuestionIndex: questionData.length - 1,
+      score: 1,
       questionList: questionData,
     },
   };
 
   const expectedState = {
-    status: 'correct',
+    status: 'done',
     action: [{ type: 'goToResults' }],
     data: {
       currentQuestionIndex: questionData.length - 1,
+      score: 2,
       questionList: questionData,
     },
   };
@@ -186,15 +190,17 @@ test('When in incorrect status and there are no more questions a continue action
     status: 'incorrect',
     data: {
       currentQuestionIndex: questionData.length - 1,
+      score: 1,
       questionList: questionData,
     },
   };
 
   const expectedState = {
-    status: 'incorrect',
+    status: 'done',
     action: [{ type: 'goToResults' }],
     data: {
       currentQuestionIndex: questionData.length - 1,
+      score: 1,
       questionList: questionData,
     },
   };
@@ -245,6 +251,32 @@ test('When in tryagain status and a selectAnswer action in sent to reducer the s
   expect(
     QuizReducer(state, {
       type: 'selectAnswer',
+    })
+  ).toEqual(expectedState);
+});
+
+test('When in done status a playAgain action should result in the reducer being in initial state.', () => {
+  const state = {
+    status: 'done',
+  };
+
+  expect(
+    QuizReducer(state, {
+      type: 'playAgain',
+    })
+  ).toEqual(initalQuizState);
+});
+
+test('When in start status and a begin action is sent to the reducer it should transition to idle', () => {
+  const expectedState = {
+    ...initalQuizState,
+    status: 'idle',
+    action: [{ type: 'startTimer' }],
+  };
+
+  expect(
+    QuizReducer(initalQuizState, {
+      type: 'begin',
     })
   ).toEqual(expectedState);
 });

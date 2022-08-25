@@ -9,12 +9,14 @@ declare module '*.svg' {
  * States for the finite state of the state machine defined in the reducer.
  */
 export type QuizStatus =
+  | 'start'
   | 'idle'
   | 'selected'
   | 'correct'
   | 'tryagain'
   | 'correct'
-  | 'incorrect';
+  | 'incorrect'
+  | 'done';
 
 /**
  * Actions that can be sent to the reducer or sent from the reducer to be handled in a useEffects hook.
@@ -29,7 +31,9 @@ export type Action =
   | { type: 'submitAnswer'; payload: { chosenAnswerList: string[] } }
   | { type: 'continue' }
   | { type: 'loadQuestions' }
-  | { type: 'goToResults' };
+  | { type: 'goToResults' }
+  | { type: 'playAgain' }
+  | { type: 'begin' };
 
 export interface IAnswerOption {
   id: string;
@@ -52,6 +56,7 @@ export interface IQuizState {
     attemptCount: number;
     currentQuestionIndex: number;
     questionList: IQuestion[];
+    score: number;
     submittedAnswerMap: {
       [questionId: string]: string[];
     };

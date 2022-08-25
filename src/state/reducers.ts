@@ -3,12 +3,13 @@ import questionData from './questionData';
 import { isAnswerCorrect, getStateAfterSubmittingAnswer } from '../utils';
 
 const initalQuizState: IQuizState = {
-  status: 'idle',
-  action: [{ type: 'startTimer' }],
+  status: 'start',
+  action: [],
   data: {
     attemptCount: 1,
     currentQuestionIndex: 0,
     questionList: questionData,
+    score: 0,
     submittedAnswerMap: {},
   },
 };
@@ -87,13 +88,18 @@ const correctReducer = (state: IQuizState, action: Action): IQuizState => {
       state?.data?.currentQuestionIndex < state?.data?.questionList?.length - 1;
     return {
       ...state,
-      status: hasMoreQuestions ? 'idle' : state?.status,
+      status: hasMoreQuestions ? 'idle' : 'done',
       action: [{ type: hasMoreQuestions ? 'startTimer' : 'goToResults' }],
       data: {
         ...state.data,
         currentQuestionIndex: hasMoreQuestions
           ? state?.data?.currentQuestionIndex + 1
           : state?.data?.currentQuestionIndex,
+        score:
+          // Only increase score if answer is correct.
+          state.status === 'correct'
+            ? state?.data?.score + 1
+            : state?.data?.score,
       },
     };
   }
@@ -106,6 +112,26 @@ const tryagainReducer = (state: IQuizState, action: Action): IQuizState => {
       ...state,
       status: 'selected',
       action: [],
+    };
+  }
+  return state;
+};
+
+const doneReducer = (state: IQuizState, action: Action): IQuizState => {
+  if (action.type === 'playAgain') {
+    return {
+      ...initalQuizState,
+    };
+  }
+  return state;
+};
+
+const startReducer = (state: IQuizState, action: Action): IQuizState => {
+  if (action.type === 'begin') {
+    return {
+      ...state,
+      status: 'idle',
+      action: [{ type: 'startTimer' }],
     };
   }
   return state;
@@ -136,6 +162,11 @@ const quizReducer = (state: IQuizState, action: Action): IQuizState => {
     case 'tryagain':
       state = tryagainReducer(state, action);
       break;
+    case 'done':
+      state = doneReducer(state, action);
+      break;
+    case 'start':
+      state = startReducer(state, action);
   }
   return state;
 };
