@@ -30,7 +30,7 @@ test('Reducer should return default state when handling any action other than se
   })
 })
 
-test('When in selected state, reducer should transition to correct state when given a correct answer', () => {
+test('When in selected status, reducer should transition to correct status when given a correct answer', () => {
   const state = {
     status: 'selected',
     action: [],
@@ -54,4 +54,37 @@ test('When in selected state, reducer should transition to correct state when gi
     }
   }
   expect(QuizReducer(state, { type: 'submitAnswer', payload: { chosenAnswerList: questionData[0].correctAnswerKeyList }})).toEqual(expectedState);
+})
+
+test('When in selected status, reducer should transition to tryagain status when given an incorrect answer and there are attempts left', () => {
+  const state = {
+    status: 'selected',
+    action: [],
+    data: {
+      attemptCount: 1,
+      currentQuestionIndex: 0,
+      questionList: questionData,
+    }
+  };
+
+  const expectedState = {
+    status: 'tryagain',
+    action: [
+      { type: 'resetTimer' }
+    ],
+    data: {
+      attemptCount: 2,
+      currentQuestionIndex: 0,
+      questionList: questionData,
+      submittedAnswerMap: {
+        [questionData[0].id]: ['foo']
+      }
+    }
+  }
+
+  expect(QuizReducer(state, { type: 'submitAnswer', payload: { chosenAnswerList: ['foo'] }})).toEqual(expectedState);
+})
+
+test('When in selected status, reducer should transition to incorrect status in an incorrect answer is given and there are no more attempts left.', () => {
+  
 })

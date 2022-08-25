@@ -44,13 +44,15 @@ const selectedReducer = (state: IQuizState, action: Action): IQuizState => {
     const currentIndex = state?.data?.currentQuestionIndex;
     const currentQuestion = state?.data?.questionList[currentIndex];
     const isCorrect = isAnswerCorrect(currentQuestion?.correctAnswerKeyList, action?.payload?.chosenAnswerList);
-    const hasAttemptsLeft = state?.data?.attemptCount > currentQuestion?.allowedAttemptCount;
+    const hasAttemptsLeft = state?.data?.attemptCount <= currentQuestion?.allowedAttemptCount;
+    const nextStatus = getStateAfterSubmittingAnswer(isCorrect, hasAttemptsLeft);
     return {
       ...state,
-      status: getStateAfterSubmittingAnswer(isCorrect, hasAttemptsLeft),
-      action: [{type: 'stopTimer'}],
+      status: nextStatus,
+      action: [{type: nextStatus === 'tryagain' ? 'resetTimer' : 'stopTimer'}],
       data: {
         ...state.data,
+        attemptCount: nextStatus === 'tryagain' ? state.data.attemptCount + 1 : state.data.attemptCount,
         submittedAnswerMap: {
           ...state.data.submittedAnswerMap,
           [state.data.questionList[currentIndex].id]: action.payload.chosenAnswerList
