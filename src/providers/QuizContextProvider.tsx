@@ -1,13 +1,22 @@
-import { createContext, useReducer, FC, ReactNode, useContext } from 'react';
+import {
+  createContext,
+  useReducer,
+  FC,
+  ReactNode,
+  useContext,
+  Context,
+  Dispatch,
+} from 'react';
 import quizReducer, { initalQuizState } from '../state/reducers';
+import { IQuizState, Action } from '../../types';
 
-const QuizContext = createContext({});
+let QuizContext: Context<[IQuizState, Dispatch<Action>]>;
 
 const QuizContextProvider: FC<{
   children: ReactNode;
 }> = ({ children }) => {
   const [state, dispatch] = useReducer(quizReducer, initalQuizState);
-
+  QuizContext = createContext([state, dispatch]);
   return (
     <QuizContext.Provider value={[state, dispatch]}>
       {children}

@@ -90,6 +90,25 @@ const clickHandler = (
   }
 };
 
+/**
+ * Get tabIndex value.
+ * @param disabled Boolean indicating if input is disabled.
+ * @param checked Boolean indicating if input is checked.
+ * @returns undefined if disabled, -1 or 0 depending on checked.
+ */
+const getTabIndex = (
+  disabled: boolean,
+  checked: boolean
+): number | undefined => {
+  if (disabled) {
+    return undefined;
+  }
+  if (checked) {
+    return -1;
+  }
+  return 1;
+};
+
 const Input: FC<Props> = ({
   children,
   value,
@@ -102,7 +121,7 @@ const Input: FC<Props> = ({
     <StyledInput
       role={type}
       aria-checked={checked ? 'true' : 'false'}
-      tabIndex={checked ? -1 : 0}
+      tabIndex={getTabIndex(disabled, checked)}
       onClick={() => clickHandler(value, disabled, onClick)}
       className={`input ${checked ? 'checked' : ''} ${
         disabled ? 'disabled' : ''

@@ -24,11 +24,21 @@ const StyledButton = styled.button`
 interface Props {
   onClick: () => void;
   disabled?: boolean;
+  className?: string;
 }
 
-const Button: FC<Props> = ({ children, onClick, disabled = false }) => {
+const Button: FC<Props> = ({
+  children,
+  onClick,
+  disabled = false,
+  className = '',
+}) => {
   return (
-    <StyledButton disabled={disabled} onClick={() => onClick()}>
+    <StyledButton
+      className={className}
+      disabled={disabled}
+      onClick={() => onClick()}
+    >
       {children}
     </StyledButton>
   );
