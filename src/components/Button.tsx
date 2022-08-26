@@ -10,6 +10,7 @@ const StyledButton = styled.button`
   font-family: ${theme.fonts.global};
   font-size: ${theme.fontSizes.body};
   font-weight: ${theme.fontWeights.bold};
+  text-align: center;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
   &:hover {

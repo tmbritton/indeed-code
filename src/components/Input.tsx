@@ -13,6 +13,7 @@ const StyledInput = styled('div')`
   align-items: center;
   cursor: pointer;
   position: relative;
+  margin-bottom: 1rem;
   &::before {
     display: inline-block;
     width: 1.5rem;

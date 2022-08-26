@@ -10,6 +10,7 @@ const initalQuizState: IQuizState = {
     currentQuestionIndex: 0,
     questionList: questionData,
     score: 0,
+    selectedAnswers: [],
     submittedAnswerMap: {},
   },
 };
@@ -27,6 +28,10 @@ const idleReducer = (state: IQuizState, action: Action): IQuizState => {
         ...state,
         status: 'selected',
         action: [],
+        data: {
+          ...state.data,
+          selectedAnswers: action.payload.selections,
+        },
       };
   }
   return state;
@@ -39,12 +44,21 @@ const idleReducer = (state: IQuizState, action: Action): IQuizState => {
  * @returns states
  */
 const selectedReducer = (state: IQuizState, action: Action): IQuizState => {
+  if (action?.type === 'selectAnswer') {
+    return {
+      ...state,
+      data: {
+        ...state.data,
+        selectedAnswers: action.payload.selections,
+      },
+    };
+  }
   if (action?.type === 'submitAnswer') {
     const currentIndex = state?.data?.currentQuestionIndex;
     const currentQuestion = state?.data?.questionList[currentIndex];
     const isCorrect = isAnswerCorrect(
       currentQuestion?.correctAnswerKeyList,
-      action?.payload?.chosenAnswerList
+      action?.payload?.selections
     );
     const hasAttemptsLeft =
       state?.data?.attemptCount < currentQuestion?.allowedAttemptCount;
@@ -66,8 +80,7 @@ const selectedReducer = (state: IQuizState, action: Action): IQuizState => {
             : state.data.attemptCount,
         submittedAnswerMap: {
           ...state.data.submittedAnswerMap,
-          [state.data.questionList[currentIndex].id]:
-            action.payload.chosenAnswerList,
+          [state.data.questionList[currentIndex].id]: action.payload.selections,
         },
       },
     };
@@ -92,6 +105,7 @@ const correctReducer = (state: IQuizState, action: Action): IQuizState => {
       action: [{ type: hasMoreQuestions ? 'startTimer' : 'goToResults' }],
       data: {
         ...state.data,
+        attemptCount: hasMoreQuestions ? 1 : state?.data?.attemptCount,
         currentQuestionIndex: hasMoreQuestions
           ? state?.data?.currentQuestionIndex + 1
           : state?.data?.currentQuestionIndex,
@@ -112,6 +126,10 @@ const tryagainReducer = (state: IQuizState, action: Action): IQuizState => {
       ...state,
       status: 'selected',
       action: [],
+      data: {
+        ...state.data,
+        selectedAnswers: action?.payload?.selections,
+      },
     };
   }
   return state;

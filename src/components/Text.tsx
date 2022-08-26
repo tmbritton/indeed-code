@@ -3,8 +3,8 @@ import theme from '../theme';
 import styled from '@emotion/styled';
 
 interface Props {
-  textStyle?: 'body' | 'heading' | 'heading2' | 'feedback';
-  color?: 'default' | 'success' | 'failure';
+  textStyle?: 'body' | 'heading' | 'heading2' | 'feedback' | 'italic';
+  color?: 'default' | 'success' | 'failure' | 'deemphasize';
   element?: 'h1' | 'h2' | 'p' | 'span';
   className?: string;
 }
@@ -44,6 +44,13 @@ const Text: FC<Props> = ({
       line-height: 1.5;
       margin-bottom: 1.5rem;
     }
+    &.textStyle-italic {
+      font-size: ${theme.fontSizes.body};
+      font-weight: ${theme.fontWeights.normal};
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      text-style: italic;
+    }
     &.color-default {
       color: ${theme.colors.text};
     }
@@ -52,6 +59,9 @@ const Text: FC<Props> = ({
     }
     &.color-failure {
       color: ${theme.colors.failure};
+    }
+    &.color-deemphasize {
+      color: ${theme.colors.disabled};
     }
   `;
 

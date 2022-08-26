@@ -42,3 +42,38 @@ export const getStateAfterSubmittingAnswer = (
   }
   return 'incorrect';
 };
+
+/**
+ * Determine new state of selected answers from current state and if multiple answers are allowed.
+ * @param currentState
+ * @param selected
+ * @param multipleAllowed
+ */
+export const getSelectedState = (
+  currentState: string[],
+  value: string,
+  multipleAllowed: boolean
+) => {
+  let newState: string[] = [];
+  if (multipleAllowed) {
+    // If answer is already selected.
+    if (currentState.includes(value)) {
+      // Don't allow deselecting of options if there is only one selected.
+      if (currentState.length === 1) {
+        newState = currentState;
+        // If there are multiple options chosen, remove value from currentState.
+      } else {
+        const index = currentState.indexOf(value);
+        const currentStateClone = [...currentState];
+        currentStateClone.splice(index, 1);
+        newState = currentStateClone;
+      }
+    } else {
+      newState = currentState.concat([value]);
+    }
+  } else {
+    // Only one answer allowed.
+    newState.push(value);
+  }
+  return newState;
+};

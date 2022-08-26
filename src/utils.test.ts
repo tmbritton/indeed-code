@@ -1,4 +1,8 @@
-import { isAnswerCorrect, getStateAfterSubmittingAnswer } from './utils';
+import {
+  isAnswerCorrect,
+  getStateAfterSubmittingAnswer,
+  getSelectedState,
+} from './utils';
 
 const oneCorrectAnswer = ['123'];
 
@@ -47,4 +51,24 @@ test('getStateAfterSubmittingAnswer should return tryagain if answer is incorrec
 
 test('getStateAfterSubmittingAnswer should return incorrect if answer is incorrect and there are no attempts left', () => {
   expect(getStateAfterSubmittingAnswer(false, false)).toEqual('incorrect');
+});
+
+test('getSelectedState: If multiple are not allowed, replace currentState with selected value.', () => {
+  const current = ['foo'];
+  expect(getSelectedState(current, 'bar', false)).toEqual(['bar']);
+});
+
+test('getSelectedState: If multiple are allowed, selected should be added to the array.', () => {
+  const current = ['foo'];
+  expect(getSelectedState(current, 'bar', true)).toEqual(['foo', 'bar']);
+});
+
+test('getSelectedState: If multiple are allowed, and the value is already selected, It should be removed.', () => {
+  const current = ['foo', 'bar'];
+  expect(getSelectedState(current, 'foo', true)).toEqual(['bar']);
+});
+
+test('getSelectedState: If multiple are allowed, and there is only one current selection, and the same selection is chosen again, it should not be removed.', () => {
+  const current = ['foo'];
+  expect(getSelectedState(current, 'foo', true)).toEqual(['foo']);
 });

@@ -9,9 +9,17 @@ test('Reducer should transition from idle to selected when sent a selectAnswer a
   const expectedState = {
     status: 'selected',
     action: [],
+    data: {
+      selectedAnswers: ['foo'],
+    },
   };
 
-  expect(QuizReducer(state, { type: 'selectAnswer' })).toEqual(expectedState);
+  expect(
+    QuizReducer(state, {
+      type: 'selectAnswer',
+      payload: { selections: ['foo'] },
+    })
+  ).toEqual(expectedState);
 });
 
 test('Reducer should return default state when handling any action other than selectedAnswer in idle state', () => {
@@ -28,6 +36,28 @@ test('Reducer should return default state when handling any action other than se
   actions.forEach((action) => {
     expect(QuizReducer(initalQuizState, action)).toEqual(initalQuizState);
   });
+});
+
+test('When in selected status, reducer should save selected answers', () => {
+  const state = {
+    status: 'selected',
+    data: {
+      selectedAnswers: [],
+    },
+  };
+
+  const expectedState = {
+    status: 'selected',
+    data: {
+      selectedAnswers: ['foo', 'bar'],
+    },
+  };
+  expect(
+    QuizReducer(state, {
+      type: 'selectAnswer',
+      payload: { selections: ['foo', 'bar'] },
+    })
+  ).toEqual(expectedState);
 });
 
 test('When in selected status, reducer should transition to correct status when given a correct answer', () => {
@@ -54,7 +84,7 @@ test('When in selected status, reducer should transition to correct status when 
   expect(
     QuizReducer(state, {
       type: 'submitAnswer',
-      payload: { chosenAnswerList: questionData[0].correctAnswerKeyList },
+      payload: { selections: questionData[0].correctAnswerKeyList },
     })
   ).toEqual(expectedState);
 });
@@ -86,7 +116,7 @@ test('When in selected status, reducer should transition to tryagain status when
   expect(
     QuizReducer(state, {
       type: 'submitAnswer',
-      payload: { chosenAnswerList: ['foo'] },
+      payload: { selections: ['foo'] },
     })
   ).toEqual(expectedState);
 });
@@ -118,7 +148,7 @@ test('When in selected status, reducer should transition to incorrect status whe
   expect(
     QuizReducer(state, {
       type: 'submitAnswer',
-      payload: { chosenAnswerList: ['foo'] },
+      payload: { selections: ['foo'] },
     })
   ).toEqual(expectedState);
 });
@@ -128,6 +158,7 @@ test('When in correct status and there are more questions a continue action shou
     status: 'correct',
     action: [{ type: 'stopTimer' }],
     data: {
+      attemptCount: 2,
       currentQuestionIndex: 0,
       questionList: questionData,
       score: 0,
@@ -141,6 +172,7 @@ test('When in correct status and there are more questions a continue action shou
     status: 'idle',
     action: [{ type: 'startTimer' }],
     data: {
+      attemptCount: 1,
       currentQuestionIndex: 1,
       questionList: questionData,
       score: 1,
@@ -217,6 +249,7 @@ test('When in incorrect status and there are more questions a continue action sh
     status: 'incorrect',
     action: [{ type: 'stopTimer' }],
     data: {
+      attemptCount: 2,
       currentQuestionIndex: 0,
       questionList: questionData,
     },
@@ -226,6 +259,7 @@ test('When in incorrect status and there are more questions a continue action sh
     status: 'idle',
     action: [{ type: 'startTimer' }],
     data: {
+      attemptCount: 1,
       currentQuestionIndex: 1,
       questionList: questionData,
     },
@@ -247,10 +281,16 @@ test('When in tryagain status and a selectAnswer action in sent to reducer the s
   const expectedState = {
     status: 'selected',
     action: [],
+    data: {
+      selectedAnswers: ['foo'],
+    },
   };
   expect(
     QuizReducer(state, {
       type: 'selectAnswer',
+      payload: {
+        selections: ['foo'],
+      },
     })
   ).toEqual(expectedState);
 });

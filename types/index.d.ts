@@ -27,8 +27,8 @@ export type Action =
   | { type: 'stopTimer' }
   | { type: 'timeOut' }
   | { type: 'forceSubmission' }
-  | { type: 'selectAnswer'; payload: { answerId: string } }
-  | { type: 'submitAnswer'; payload: { chosenAnswerList: string[] } }
+  | { type: 'selectAnswer'; payload: { selections: string[] } }
+  | { type: 'submitAnswer'; payload: { selections: string[] } }
   | { type: 'continue' }
   | { type: 'loadQuestions' }
   | { type: 'goToResults' }
@@ -57,8 +57,15 @@ export interface IQuizState {
     currentQuestionIndex: number;
     questionList: IQuestion[];
     score: number;
+    selectedAnswers: string[];
     submittedAnswerMap: {
       [questionId: string]: string[];
     };
   };
+}
+
+export interface IScore {
+  correct: number;
+  count: number;
+  timeStamp: number;
 }
