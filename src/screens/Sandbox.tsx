@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import Button from '../components/Button';
 import Text from '../components/Text';
 import Input from '../components/Input';
@@ -48,6 +48,20 @@ const Sandbox: FC<{}> = () => {
         </Text>
         <Input value="foo" onClick={(str) => alert(str)}>
           Choose me!
+        </Input>
+        <Input value="checked" checked={true} onClick={(str) => alert(str)}>
+          Checked
+        </Input>
+        <Input value="disabled" disabled={true} onClick={(str) => alert(str)}>
+          Disabled
+        </Input>
+        <Input
+          value="disabled and checked"
+          disabled={true}
+          checked={true}
+          onClick={(str) => alert(str)}
+        >
+          Disabled and Checked
         </Input>
       </div>
     </div>

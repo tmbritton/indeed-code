@@ -6,6 +6,7 @@ interface Props {
   textStyle?: 'body' | 'heading' | 'heading2' | 'feedback';
   color?: 'default' | 'success' | 'failure';
   element?: 'h1' | 'h2' | 'p' | 'span';
+  className?: string;
 }
 
 const Text: FC<Props> = ({
@@ -13,6 +14,7 @@ const Text: FC<Props> = ({
   textStyle = 'body',
   color = 'default',
   element = 'p',
+  className = '',
 }) => {
   // Do the styled component here so we can dynamically define the HTML tag.
   const StyledTag = styled(element)`
@@ -54,7 +56,7 @@ const Text: FC<Props> = ({
   `;
 
   return (
-    <StyledTag className={`textStyle-${textStyle} color-${color}`}>
+    <StyledTag className={`textStyle-${textStyle} color-${color} ${className}`}>
       {children}
     </StyledTag>
   );

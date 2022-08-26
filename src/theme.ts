@@ -14,6 +14,7 @@ export default {
   colors: {
     text: '#2D2D2D',
     textInverted: '#FFFFFF',
+    textDisabled: '#AAAAAA',
     primary: '#065FB1',
     primaryHover: '#2582d9',
     success: '#065927',
