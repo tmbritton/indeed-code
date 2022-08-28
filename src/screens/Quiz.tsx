@@ -2,7 +2,7 @@ import { FC, Dispatch, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useQuizContext } from '../providers/QuizContextProvider';
 import { Action } from '../../types';
-import { useNavigate, NavigateFunction } from 'react-router';
+import { useNavigate } from 'react-router';
 import Text from '../components/Text';
 import Button from '../components/Button';
 import { ContentWrapper } from '../components/LayoutComponents';
@@ -179,7 +179,7 @@ const Quiz: FC<{}> = () => {
           Please select all that apply.
         </Text>
       ) : null}
-      <AnswerOptionsWrap key="rerender?">
+      <AnswerOptionsWrap role="radiogroup">
         {question.answerOptionList.map((option, index) => {
           return (
             <Input
@@ -197,6 +197,7 @@ const Quiz: FC<{}> = () => {
               disabled={
                 state?.status === 'correct' || state.status === 'incorrect'
               }
+              id={option?.id}
             >
               {option.answerText}
             </Input>

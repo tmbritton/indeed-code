@@ -78,6 +78,7 @@ interface Props {
   checked?: boolean;
   disabled?: boolean;
   onClick: (arg0: string) => void;
+  id: string;
 }
 
 /**
@@ -136,6 +137,7 @@ const Input: FC<Props> = ({
   checked = false,
   disabled = false,
   onClick,
+  id,
 }) => {
   return (
     <StyledInput
@@ -147,6 +149,7 @@ const Input: FC<Props> = ({
       className={`input ${checked ? 'checked' : ''} ${
         disabled ? 'disabled' : ''
       }`}
+      id={id}
     >
       <Label className={`label ${disabled ? 'disabled' : ''}`} element="span">
         {children}

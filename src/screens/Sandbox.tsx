@@ -46,13 +46,23 @@ const Sandbox: FC<{}> = () => {
         <Text element="h1" textStyle="heading">
           Input:
         </Text>
-        <Input value="foo" onClick={(str) => alert(str)}>
+        <Input value="foo" onClick={(str) => alert(str)} id="asdfas">
           Choose me!
         </Input>
-        <Input value="checked" checked={true} onClick={(str) => alert(str)}>
+        <Input
+          value="checked"
+          checked={true}
+          onClick={(str) => alert(str)}
+          id="Asdfa"
+        >
           Checked
         </Input>
-        <Input value="disabled" disabled={true} onClick={(str) => alert(str)}>
+        <Input
+          value="disabled"
+          disabled={true}
+          onClick={(str) => alert(str)}
+          id="Asdfasf"
+        >
           Disabled
         </Input>
         <Input
@@ -60,6 +70,7 @@ const Sandbox: FC<{}> = () => {
           disabled={true}
           checked={true}
           onClick={(str) => alert(str)}
+          id="gsdfgsd"
         >
           Disabled and Checked
         </Input>
