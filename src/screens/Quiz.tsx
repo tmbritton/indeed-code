@@ -179,7 +179,7 @@ const Quiz: FC<{}> = () => {
           Please select all that apply.
         </Text>
       ) : null}
-      <AnswerOptionsWrap>
+      <AnswerOptionsWrap key="rerender?">
         {question.answerOptionList.map((option, index) => {
           return (
             <Input
@@ -194,6 +194,9 @@ const Quiz: FC<{}> = () => {
               key={option?.id}
               value={option?.id}
               checked={selected.includes(option.id)}
+              disabled={
+                state?.status === 'correct' || state.status === 'incorrect'
+              }
             >
               {option.answerText}
             </Input>

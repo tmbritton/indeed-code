@@ -28,18 +28,21 @@ const Start: FC<{}> = () => {
   const navigate = useNavigate();
   return (
     <ContentWrapper>
-      <iframe
-        src="https://giphy.com/embed/LpcAbToYM8lKFoVTQ0"
-        width="100%"
-        frameBorder="0"
-        className="giphy-embed"
-        allowFullScreen
-      ></iframe>
+      <img
+        src="http://placekitten.com/300/200"
+        alt="Kitten photo"
+        width="300"
+        height="200"
+        style={{ margin: '0 auto' }}
+      />
       <Text element="h1" textStyle="heading">
         Ready to take quiz?
       </Text>
       <Text>Click the button to begin!</Text>
-      <StyledButton onClick={() => clickHandler(dispatch, navigate)}>
+      <StyledButton
+        onClick={() => clickHandler(dispatch, navigate)}
+        tabIndex={0}
+      >
         Start Quiz!
       </StyledButton>
     </ContentWrapper>

@@ -21,6 +21,7 @@ export default {
     failure: '#691007',
     disabled: '#ABABAB',
     border: '#C0C0C0',
+    highlight: '#3eaded',
   },
   breakpoints: {
     //Let's just use MUI's breakpoints.

@@ -20,12 +20,16 @@ const StyledButton = styled.button`
     cursor: not-allowed;
     background-color: ${theme.colors.disabled};
   }
+  &:focus {
+    outline: 3px solid ${theme.colors.highlight};
+  }
 `;
 
 interface Props {
   onClick: () => void;
   disabled?: boolean;
   className?: string;
+  tabIndex?: number;
 }
 
 const Button: FC<Props> = ({
@@ -33,12 +37,14 @@ const Button: FC<Props> = ({
   onClick,
   disabled = false,
   className = '',
+  tabIndex = undefined,
 }) => {
   return (
     <StyledButton
       className={className}
       disabled={disabled}
       onClick={() => onClick()}
+      tabIndex={tabIndex}
     >
       {children}
     </StyledButton>

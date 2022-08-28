@@ -55,6 +55,11 @@ const StyledInput = styled('div')`
       border-color: ${theme.colors.primary};
     }
   }
+  &:focus {
+    &::before {
+      outline: 3px solid ${theme.colors.highlight};
+    }
+  }
 `;
 
 const Label = styled(Text)`
@@ -87,6 +92,20 @@ const clickHandler = (
   onClick: (arg0: string) => void
 ): void => {
   if (!disabled) {
+    onClick(value);
+  }
+};
+
+const keyPressHandler = (
+  event: React.KeyboardEvent<HTMLDivElement>,
+  value: string,
+  disabled: boolean,
+  onClick: (arg0: string) => void
+): void => {
+  if (disabled) {
+    return;
+  }
+  if (event.key === 'Enter' || event.key === ' ') {
     onClick(value);
   }
 };
@@ -124,6 +143,7 @@ const Input: FC<Props> = ({
       aria-checked={checked ? 'true' : 'false'}
       tabIndex={getTabIndex(disabled, checked)}
       onClick={() => clickHandler(value, disabled, onClick)}
+      onKeyPress={(e) => keyPressHandler(e, value, disabled, onClick)}
       className={`input ${checked ? 'checked' : ''} ${
         disabled ? 'disabled' : ''
       }`}

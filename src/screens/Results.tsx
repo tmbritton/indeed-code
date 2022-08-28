@@ -74,12 +74,13 @@ const Results: FC<{}> = () => {
 
   return (
     <ContentWrapper>
-      <iframe
-        src="https://giphy.com/embed/26u4lOMA8JKSnL9Uk"
-        width="100%"
-        frameBorder="0"
-        allowFullScreen
-      ></iframe>
+      <img
+        src="http://placekitten.com/200/300"
+        alt="Kitten photo"
+        width="300"
+        height="200"
+        style={{ margin: '0 auto' }}
+      />
       <Text element="h1" textStyle="heading">
         You're a Trivia master!
       </Text>
