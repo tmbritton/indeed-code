@@ -20,7 +20,7 @@ const StyledButton = styled.button`
     cursor: not-allowed;
     background-color: ${theme.colors.disabled};
   }
-  &:focus {
+  &:focus-visible {
     outline: 3px solid ${theme.colors.highlight};
   }
 `;
@@ -41,7 +41,7 @@ const Button: FC<Props> = ({
 }) => {
   return (
     <StyledButton
-      className={className}
+      className={`button ${className}`}
       disabled={disabled}
       onClick={() => onClick()}
       tabIndex={tabIndex}

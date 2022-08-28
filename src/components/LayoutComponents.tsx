@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import theme from '../theme';
 
 export const PageWrapper = styled('div')`
   display: flex;
@@ -9,9 +10,11 @@ export const PageWrapper = styled('div')`
 export const ContentWrapper = styled('main')`
   display: flex;
   flex-direction: column;
-  min-width: 100%;
+  width: 100%;
   position: relative;
   padding: 3rem;
   text-align: center;
   height: 100vh;
+  max-width: ${theme.breakpoints.md};
+  flex: 0 1 auto;
 `;

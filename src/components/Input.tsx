@@ -55,7 +55,7 @@ const StyledInput = styled('div')`
       border-color: ${theme.colors.primary};
     }
   }
-  &:focus {
+  &:focus-visible {
     &::before {
       outline: 3px solid ${theme.colors.highlight};
     }

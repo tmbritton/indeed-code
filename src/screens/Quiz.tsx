@@ -8,6 +8,7 @@ import { ContentWrapper } from '../components/LayoutComponents';
 import Input from '../components/Input';
 import { getSelectedState } from '../utils';
 import { QuizStatus } from '../../types';
+import theme from '../theme';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   selectScore,
@@ -27,6 +28,11 @@ const TitleWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   text-align: left;
+  @media (min-width: ${theme.breakpoints.sm}) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+  }
 `;
 
 const QuestionText = styled(Text)`
@@ -37,6 +43,13 @@ const AnswerOptionsWrap = styled('div')`
   display: flex;
   flex-direction: column;
   width: 100%;
+  @media (min-width: ${theme.breakpoints.sm}) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    & > .input {
+      flex: 1 0 50%;
+    }
+  }
 `;
 
 const QuizWrapper = styled(ContentWrapper)`
@@ -49,6 +62,21 @@ const ButtonWrap = styled('div')`
   display: flex;
   flex-direction: column;
   margin-top: auto;
+  @media (min-width: ${theme.breakpoints.sm}) {
+    margin-top: 1.5rem;
+    & > .button {
+      align-self: flex-start;
+    }
+  }
+`;
+
+const InfoTextWrap = styled('div')`
+  display: flex;
+  flex-direction: column;
+  @media (min-width: ${theme.breakpoints.sm}) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `;
 
 /**
@@ -111,12 +139,14 @@ const buttonClickHandler = (
   dispatch: Dispatch<Action>,
   selections?: string[]
 ) => {
+  // Check answers.
   if (status === 'selected' && selections && selections.length) {
     dispatch({
       type: 'submitAnswer',
       payload: { selections: selections },
     });
   }
+  // Next question or go to results.
   if (status === 'correct' || status === 'incorrect') {
     dispatch({
       type: 'continue',
@@ -235,12 +265,14 @@ const Quiz: FC<{}> = () => {
         </Text>
       ) : null}
       <ButtonWrap>
-        <Text textStyle="italic" color="deemphasize" element="p">
-          Attempt {attemptCount} / {currentQuestion.allowedAttemptCount}
-        </Text>
-        <Text color="deemphasize" element="p">
-          Timer: {timeRemaining}
-        </Text>
+        <InfoTextWrap>
+          <Text textStyle="italic" color="deemphasize" element="p">
+            Attempt {attemptCount} / {currentQuestion.allowedAttemptCount}
+          </Text>
+          <Text color="deemphasize" element="p">
+            Timer: {timeRemaining}
+          </Text>
+        </InfoTextWrap>
         <Button
           disabled={isButtonDisabled(status)}
           onClick={() => buttonClickHandler(status, dispatch, selectedAnswers)}

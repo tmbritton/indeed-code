@@ -6,9 +6,14 @@ import styled from '@emotion/styled';
 import { Action } from '../../types';
 import { useNavigate, NavigateFunction } from 'react-router';
 import { useAppDispatch } from '../store/hooks';
+import theme from '../theme';
 
 const StyledButton = styled(Button)`
   margin-top: auto;
+  @media (min-width: ${theme.breakpoints.sm}) {
+    margin-top: 1.5rem;
+    align-self: center;
+  }
 `;
 
 /**

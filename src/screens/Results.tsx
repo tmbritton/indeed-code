@@ -4,6 +4,7 @@ import { useNavigate, NavigateFunction } from 'react-router';
 import { ContentWrapper } from '../components/LayoutComponents';
 import Text from '../components/Text';
 import Button from '../components/Button';
+import theme from '../theme';
 import { Action, IScore } from '../../types';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
@@ -14,6 +15,10 @@ import {
 
 const StyledButton = styled(Button)`
   margin-top: auto;
+  @media (min-width: ${theme.breakpoints.sm}) {
+    margin-top: 1.5rem;
+    align-self: center;
+  }
 `;
 
 const formatDate = (timeStamp: number): string => {
@@ -84,8 +89,8 @@ const Results: FC<{}> = () => {
       <img
         src="http://placekitten.com/200/300"
         alt="Kitten photo"
-        width="300"
-        height="200"
+        width="200"
+        height="300"
         style={{ margin: '0 auto' }}
       />
       <Text element="h1" textStyle="heading">
