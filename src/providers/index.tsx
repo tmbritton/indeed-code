@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import QuizContextProvider from './QuizContextProvider';
+import ReduxStoreProvider from './ReduxStoreProvider';
 
 const Providers: FC<{}> = ({ children }) => (
-  <QuizContextProvider>{children}</QuizContextProvider>
+  <ReduxStoreProvider>{children}</ReduxStoreProvider>
 );
 
 export default Providers;

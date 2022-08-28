@@ -1,6 +1,5 @@
 import { FC, Dispatch, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { useQuizContext } from '../providers/QuizContextProvider';
 import { Action } from '../../types';
 import { useNavigate } from 'react-router';
 import Text from '../components/Text';
@@ -9,6 +8,20 @@ import { ContentWrapper } from '../components/LayoutComponents';
 import Input from '../components/Input';
 import { getSelectedState } from '../utils';
 import { QuizStatus } from '../../types';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import {
+  selectScore,
+  selectStatus,
+  selectActionList,
+  selectCurrentIndex,
+  selectCurrentQuestion,
+  selectAllowMultipleAnswers,
+  selectHasMoreQuestions,
+  selectSelectedAnswers,
+  selectQuestionList,
+  selectAttemptCount,
+  selectTimeRemaining,
+} from '../store/selectors';
 
 const TitleWrapper = styled('div')`
   display: flex;
@@ -112,14 +125,19 @@ const buttonClickHandler = (
 };
 
 const Quiz: FC<{}> = () => {
-  const [state, dispatch] = useQuizContext();
-  const index = state?.data?.currentQuestionIndex;
-  const question = state?.data?.questionList?.[index];
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const allowMultipleAnswers = question?.correctAnswerKeyList?.length > 1;
-  const hasMoreQuestions =
-    state?.data?.questionList?.length - 1 > state?.data?.currentQuestionIndex;
-  const selected = state?.data?.selectedAnswers;
+  const score = useAppSelector(selectScore);
+  const status = useAppSelector(selectStatus);
+  const actionList = useAppSelector(selectActionList);
+  const currentIndex = useAppSelector(selectCurrentIndex);
+  const currentQuestion = useAppSelector(selectCurrentQuestion);
+  const allowMultipleAnswers = useAppSelector(selectAllowMultipleAnswers);
+  const hasMoreQuestions = useAppSelector(selectHasMoreQuestions);
+  const selectedAnswers = useAppSelector(selectSelectedAnswers);
+  const questionList = useAppSelector(selectQuestionList);
+  const attemptCount = useAppSelector(selectAttemptCount);
+  const timeRemaining = useAppSelector(selectTimeRemaining);
 
   /**
    * Set timer on initial screen load.
@@ -138,65 +156,62 @@ const Quiz: FC<{}> = () => {
    */
   useEffect(() => {
     // Handles going to start screen on refresh.
-    if (state.status === 'start') {
+    if (status === 'start') {
       navigate('/');
     }
-  }, [state.status]);
+  }, [status]);
 
   /**
    * Handle actions sent from the reducer.
    */
   useEffect(() => {
-    if (state.action.length) {
-      state.action.forEach((action) => {
+    if (actionList.length) {
+      actionList.forEach((action) => {
         if (action.type === 'goToResults') {
           navigate('/results');
         }
         if (action.type === 'forceSubmission') {
           dispatch({
             type: 'submitAnswer',
-            payload: { selections: selected },
+            payload: { selections: selectedAnswers },
           });
         }
       });
     }
-  }, [state.action]);
+  }, [actionList]);
 
   return (
     <QuizWrapper>
       <TitleWrapper>
         <Text textStyle="heading2" element="h1">
-          Question {state?.data?.currentQuestionIndex + 1} of{' '}
-          {state?.data?.questionList?.length}
+          Question {currentIndex + 1} of {questionList?.length}
         </Text>
         <Text textStyle="heading2" element="p">
-          Score: {state?.data?.score}
+          Score: {score}
         </Text>
       </TitleWrapper>
-      <QuestionText>{question?.questionText}</QuestionText>
+      <QuestionText>{currentQuestion?.questionText}</QuestionText>
       {allowMultipleAnswers ? (
         <Text textStyle="italic" color="deemphasize">
           Please select all that apply.
         </Text>
       ) : null}
       <AnswerOptionsWrap role="radiogroup">
-        {question.answerOptionList.map((option, index) => {
+        {currentQuestion.answerOptionList.map((option, index) => {
           return (
             <Input
               onClick={(value) =>
                 optionClickHandler(
                   value,
-                  selected,
+                  selectedAnswers,
                   allowMultipleAnswers,
                   dispatch
                 )
               }
               key={option?.id}
               value={option?.id}
-              checked={selected.includes(option.id)}
-              disabled={
-                state?.status === 'correct' || state.status === 'incorrect'
-              }
+              checked={selectedAnswers.includes(option.id)}
+              disabled={status === 'correct' || status === 'incorrect'}
               id={option?.id}
             >
               {option.answerText}
@@ -204,33 +219,33 @@ const Quiz: FC<{}> = () => {
           );
         })}
       </AnswerOptionsWrap>
-      {state.status === 'correct' ? (
+      {status === 'correct' ? (
         <Text textStyle="feedback" color="success">
           You got it right!
         </Text>
       ) : null}
-      {state.status === 'incorrect' || state.status === 'tryagain' ? (
+      {status === 'incorrect' || status === 'tryagain' ? (
         <Text textStyle="feedback" color="failure">
           You got it wrong ☹️
         </Text>
       ) : null}
-      {state?.data?.attemptCount > 1 ? (
+      {attemptCount > 1 ? (
         <Text textStyle="italic" color="deemphasize">
-          Hint: {question.hintText}
+          Hint: {currentQuestion.hintText}
         </Text>
       ) : null}
       <ButtonWrap>
         <Text textStyle="italic" color="deemphasize" element="p">
-          Attempt {state?.data?.attemptCount} / {question.allowedAttemptCount}
+          Attempt {attemptCount} / {currentQuestion.allowedAttemptCount}
         </Text>
         <Text color="deemphasize" element="p">
-          Timer: {state?.data?.timeLeft}
+          Timer: {timeRemaining}
         </Text>
         <Button
-          disabled={isButtonDisabled(state.status)}
-          onClick={() => buttonClickHandler(state.status, dispatch, selected)}
+          disabled={isButtonDisabled(status)}
+          onClick={() => buttonClickHandler(status, dispatch, selectedAnswers)}
         >
-          {getButtonText(state.status, hasMoreQuestions)}
+          {getButtonText(status, hasMoreQuestions)}
         </Button>
       </ButtonWrap>
     </QuizWrapper>

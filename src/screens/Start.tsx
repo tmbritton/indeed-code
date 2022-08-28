@@ -3,9 +3,9 @@ import { ContentWrapper } from '../components/LayoutComponents';
 import Text from '../components/Text';
 import Button from '../components/Button';
 import styled from '@emotion/styled';
-import { useQuizContext } from '../providers/QuizContextProvider';
 import { Action } from '../../types';
 import { useNavigate, NavigateFunction } from 'react-router';
+import { useAppDispatch } from '../store/hooks';
 
 const StyledButton = styled(Button)`
   margin-top: auto;
@@ -24,7 +24,7 @@ const clickHandler = (
 };
 
 const Start: FC<{}> = () => {
-  const [state, dispatch] = useQuizContext();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   return (
     <ContentWrapper>

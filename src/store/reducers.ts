@@ -1,3 +1,4 @@
+import { combineReducers } from 'redux';
 import { IQuizState, Action } from '../../types';
 import questionData from './questionData';
 import { isAnswerCorrect, getStateAfterSubmittingAnswer } from '../utils';
@@ -196,7 +197,10 @@ const startReducer = (state: IQuizState, action: Action): IQuizState => {
  * @param action Action
  * @returns IQuizstate
  */
-const quizReducer = (state: IQuizState, action: Action): IQuizState => {
+const quizReducer = (
+  state: IQuizState = initalQuizState,
+  action: Action
+): IQuizState => {
   switch (state.status) {
     case 'idle':
       state = idleReducer(state, action);
@@ -222,5 +226,5 @@ const quizReducer = (state: IQuizState, action: Action): IQuizState => {
   return state;
 };
 
-export default quizReducer;
+export default combineReducers({ quiz: quizReducer });
 export { initalQuizState };

@@ -1,11 +1,16 @@
 import { FC, Dispatch, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useNavigate, NavigateFunction } from 'react-router';
-import { useQuizContext } from '../providers/QuizContextProvider';
 import { ContentWrapper } from '../components/LayoutComponents';
 import Text from '../components/Text';
 import Button from '../components/Button';
 import { Action, IScore } from '../../types';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import {
+  selectStatus,
+  selectScore,
+  selectQuestionList,
+} from '../store/selectors';
 
 const StyledButton = styled(Button)`
   margin-top: auto;
@@ -29,7 +34,7 @@ const clickHandler = (
 };
 
 const Results: FC<{}> = () => {
-  const [state, dispatch] = useQuizContext();
+  const dispatch = useAppDispatch();
   const [highScore, setHighScore] = useState<IScore>({
     correct: 0,
     count: 0,
@@ -37,22 +42,24 @@ const Results: FC<{}> = () => {
   });
   const navigate = useNavigate();
   const lsKey = 'results';
+  const score = useAppSelector(selectScore);
+  const questionList = useAppSelector(selectQuestionList);
+  const status = useAppSelector(selectStatus);
 
   useEffect(() => {
     // Handles refreshing.
-    if (state.status === 'start') {
+    if (status === 'start') {
       navigate('/');
     }
-  }, [state.status]);
+  }, [status]);
 
-  // Get history of results from localStorage on pageload.
+  // Get high score from localStorage on pageload.
   useEffect(() => {
-    //if (localStorage.getItem())
     const cachedData = localStorage.getItem(lsKey);
     const cachedScore = cachedData ? JSON.parse(cachedData) : null;
     const currentScore: IScore = {
-      correct: state?.data?.score,
-      count: state?.data?.questionList?.length,
+      correct: score,
+      count: questionList.length,
       timeStamp: Date.now(),
     };
     if (cachedScore) {
@@ -85,8 +92,7 @@ const Results: FC<{}> = () => {
         You're a Trivia master!
       </Text>
       <Text>
-        You got {state?.data?.score} out of {state?.data?.questionList?.length}{' '}
-        right!
+        You got {score} out of {questionList?.length} right!
       </Text>
       <Text>
         You best score so far was {highScore.correct} out of {highScore.count}{' '}
