@@ -22,10 +22,6 @@ export type QuizStatus =
  * Actions that can be sent to the reducer or sent from the reducer to be handled in a useEffects hook.
  */
 export type Action =
-  | { type: 'startTimer' }
-  | { type: 'resetTimer' }
-  | { type: 'stopTimer' }
-  | { type: 'timeOut' }
   | { type: 'forceSubmission' }
   | { type: 'selectAnswer'; payload: { selections: string[] } }
   | { type: 'submitAnswer'; payload: { selections: string[] } }
@@ -33,7 +29,8 @@ export type Action =
   | { type: 'loadQuestions' }
   | { type: 'goToResults' }
   | { type: 'playAgain' }
-  | { type: 'begin' };
+  | { type: 'begin' }
+  | { type: 'timerTick' };
 
 export interface IAnswerOption {
   id: string;
@@ -62,6 +59,7 @@ export interface IQuizState {
     submittedAnswerMap: {
       [questionId: string]: string[];
     };
+    timeLeft: number;
   };
 }
 

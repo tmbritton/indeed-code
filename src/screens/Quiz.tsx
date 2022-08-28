@@ -1,4 +1,4 @@
-import { FC, Dispatch, useState, useEffect } from 'react';
+import { FC, Dispatch, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useQuizContext } from '../providers/QuizContextProvider';
 import { Action } from '../../types';
@@ -62,8 +62,8 @@ const optionClickHandler = (
  * @returns
  */
 const getButtonText = (status: QuizStatus, hasMoreQuestions: boolean) => {
-  if (status === 'selected' || status === 'idle') {
-    return 'Check Answer';
+  if (status === 'selected' || status === 'idle' || status === 'tryagain') {
+    return 'Submit Answer';
   }
   if (status === 'incorrect' || status === 'correct') {
     if (hasMoreQuestions) {
@@ -111,34 +111,27 @@ const buttonClickHandler = (
   }
 };
 
-/**
- * Callback for timer setInterval.
- * @param timerCount
- * @param setTimerCount
- * @param dispatch
- */
-const timerCallback = (
-  timerCount: number,
-  setTimerCount: Dispatch<React.SetStateAction<number>>,
-  dispatch: Dispatch<Action>
-) => {
-  const count = timerCount - 1;
-  setTimerCount(count);
-  if (count === 0) {
-    dispatch({ type: 'timeOut' });
-  }
-};
-
 const Quiz: FC<{}> = () => {
   const [state, dispatch] = useQuizContext();
   const index = state?.data?.currentQuestionIndex;
   const question = state?.data?.questionList?.[index];
-  const [timerCount, setTimerCount] = useState(question?.allowedTime);
   const navigate = useNavigate();
   const allowMultipleAnswers = question?.correctAnswerKeyList?.length > 1;
   const hasMoreQuestions =
     state?.data?.questionList?.length - 1 > state?.data?.currentQuestionIndex;
   const selected = state?.data?.selectedAnswers;
+
+  /**
+   * Set timer on initial screen load.
+   */
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      dispatch({ type: 'timerTick' });
+    }, 1000);
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, []);
 
   /**
    * Handle reducer status changes.
@@ -150,41 +143,20 @@ const Quiz: FC<{}> = () => {
     }
   }, [state.status]);
 
+  /**
+   * Handle actions sent from the reducer.
+   */
   useEffect(() => {
-    let timer: number;
     if (state.action.length) {
       state.action.forEach((action) => {
-        console.log(action.type);
         if (action.type === 'goToResults') {
           navigate('/results');
-        }
-        if (action.type === 'startTimer') {
-          timer = window.setInterval(
-            timerCallback,
-            1000,
-            timerCount,
-            setTimerCount,
-            dispatch
-          );
         }
         if (action.type === 'forceSubmission') {
           dispatch({
             type: 'submitAnswer',
             payload: { selections: selected },
           });
-        }
-        if (action.type === 'stopTimer') {
-          clearInterval(timer);
-        }
-        if (action.type === 'resetTimer') {
-          clearInterval(timer);
-          timer = window.setInterval(
-            timerCallback,
-            1000,
-            timerCount,
-            setTimerCount,
-            dispatch
-          );
         }
       });
     }
@@ -248,7 +220,7 @@ const Quiz: FC<{}> = () => {
           Attempt {state?.data?.attemptCount} / {question.allowedAttemptCount}
         </Text>
         <Text color="deemphasize" element="p">
-          Timer: {timerCount}
+          Timer: {state?.data?.timeLeft}
         </Text>
         <Button
           disabled={isButtonDisabled(state.status)}

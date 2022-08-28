@@ -73,7 +73,7 @@ test('When in selected status, reducer should transition to correct status when 
 
   const expectedState = {
     status: 'correct',
-    action: [{ type: 'stopTimer' }],
+    action: [],
     data: {
       currentQuestionIndex: 0,
       score: 1,
@@ -99,19 +99,22 @@ test('When in selected status, reducer should transition to tryagain status when
       attemptCount: 1,
       currentQuestionIndex: 0,
       questionList: questionData,
+      score: 1,
     },
   };
 
   const expectedState = {
     status: 'tryagain',
-    action: [{ type: 'resetTimer' }],
+    action: [],
     data: {
       attemptCount: 2,
       currentQuestionIndex: 0,
       questionList: questionData,
+      score: 1,
       submittedAnswerMap: {
         [questionData[0].id]: ['foo'],
       },
+      timeLeft: questionData[0].allowedTime,
     },
   };
 
@@ -131,16 +134,18 @@ test('When in selected status, reducer should transition to incorrect status whe
       attemptCount: 2,
       currentQuestionIndex: 0,
       questionList: questionData,
+      score: 1,
     },
   };
 
   const expectedState = {
     status: 'incorrect',
-    action: [{ type: 'stopTimer' }],
+    action: [],
     data: {
       attemptCount: 2,
       currentQuestionIndex: 0,
       questionList: questionData,
+      score: 1,
       submittedAnswerMap: {
         [questionData[0].id]: ['foo'],
       },
@@ -158,7 +163,7 @@ test('When in selected status, reducer should transition to incorrect status whe
 test('When in correct status and there are more questions a continue action should transition to idle status', () => {
   const state = {
     status: 'correct',
-    action: [{ type: 'stopTimer' }],
+    action: [],
     data: {
       attemptCount: 2,
       currentQuestionIndex: 0,
@@ -167,12 +172,13 @@ test('When in correct status and there are more questions a continue action shou
       submittedAnswerMap: {
         [questionData[0].id]: questionData[0].correctAnswerKeyList,
       },
+      timeLeft: 7,
     },
   };
 
   const expectedState = {
     status: 'idle',
-    action: [{ type: 'startTimer' }],
+    action: [],
     data: {
       attemptCount: 1,
       currentQuestionIndex: 1,
@@ -181,6 +187,7 @@ test('When in correct status and there are more questions a continue action shou
       submittedAnswerMap: {
         [questionData[0].id]: questionData[0].correctAnswerKeyList,
       },
+      timeLeft: 15,
     },
   };
 
@@ -223,9 +230,11 @@ test('When in incorrect status and there are no more questions a continue action
   const state = {
     status: 'incorrect',
     data: {
+      attemptCount: 2,
       currentQuestionIndex: questionData.length - 1,
       score: 1,
       questionList: questionData,
+      timeLeft: 12,
     },
   };
 
@@ -233,9 +242,11 @@ test('When in incorrect status and there are no more questions a continue action
     status: 'done',
     action: [{ type: 'goToResults' }],
     data: {
+      attemptCount: 2,
       currentQuestionIndex: questionData.length - 1,
       score: 1,
       questionList: questionData,
+      timeLeft: 12,
     },
   };
 
@@ -249,21 +260,23 @@ test('When in incorrect status and there are no more questions a continue action
 test('When in incorrect status and there are more questions a continue action should transition to idle status', () => {
   const state = {
     status: 'incorrect',
-    action: [{ type: 'stopTimer' }],
+    action: [],
     data: {
       attemptCount: 2,
       currentQuestionIndex: 0,
       questionList: questionData,
+      timeLeft: 0,
     },
   };
 
   const expectedState = {
     status: 'idle',
-    action: [{ type: 'startTimer' }],
+    action: [],
     data: {
       attemptCount: 1,
       currentQuestionIndex: 1,
       questionList: questionData,
+      timeLeft: 15,
     },
   };
 
@@ -313,7 +326,7 @@ test('When in start status and a begin action is sent to the reducer it should t
   const expectedState = {
     ...initalQuizState,
     status: 'idle',
-    action: [{ type: 'startTimer' }],
+    action: [],
   };
 
   expect(
@@ -323,34 +336,44 @@ test('When in start status and a begin action is sent to the reducer it should t
   ).toEqual(expectedState);
 });
 
-test('When in idle state, a timeout should force answer submission.', () => {
+test('When in idle state a timerTick action should decrement the time left.', () => {
   const state = {
     status: 'idle',
-    action: [],
+    data: {
+      timeLeft: 72,
+    },
   };
   const expectedState = {
     status: 'idle',
-    action: [{ type: 'forceSubmission' }],
+    action: [],
+    data: {
+      timeLeft: 71,
+    },
   };
   expect(
     QuizReducer(state, {
-      type: 'timeOut',
+      type: 'timerTick',
     })
   ).toEqual(expectedState);
 });
 
-test('When in selected state, a timeout should force answer submission.', () => {
+test('When in selected state a timerTick action should decrement the time left.', () => {
   const state = {
     status: 'selected',
-    action: [],
+    data: {
+      timeLeft: 10,
+    },
   };
   const expectedState = {
     status: 'selected',
-    action: [{ type: 'forceSubmission' }],
+    action: [],
+    data: {
+      timeLeft: 9,
+    },
   };
   expect(
     QuizReducer(state, {
-      type: 'timeOut',
+      type: 'timerTick',
     })
   ).toEqual(expectedState);
 });

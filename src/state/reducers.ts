@@ -12,7 +12,26 @@ const initalQuizState: IQuizState = {
     score: 0,
     selectedAnswers: [],
     submittedAnswerMap: {},
+    timeLeft: questionData?.[0]?.allowedTime,
   },
+};
+
+/**
+ * Handle timer tick in own function because it's the same across multiple reducer functions.
+ * @param state Application state
+ * @returns
+ */
+const timerTickHandler = (state: IQuizState): IQuizState => {
+  const timeLeft = state?.data?.timeLeft;
+  return {
+    ...state,
+    status: timeLeft === 0 ? 'selected' : state?.status,
+    action: timeLeft === 0 ? [{ type: 'forceSubmission' }] : [],
+    data: {
+      ...state.data,
+      timeLeft: timeLeft === 0 ? 0 : timeLeft - 1,
+    },
+  };
 };
 
 /**
@@ -22,22 +41,19 @@ const initalQuizState: IQuizState = {
  * @returns
  */
 const idleReducer = (state: IQuizState, action: Action): IQuizState => {
-  switch (action.type) {
+  switch (action?.type) {
     case 'selectAnswer':
       return {
         ...state,
         status: 'selected',
         action: [],
         data: {
-          ...state.data,
-          selectedAnswers: action.payload.selections,
+          ...state?.data,
+          selectedAnswers: action?.payload?.selections,
         },
       };
-    case 'timeOut':
-      return {
-        ...state,
-        action: [{ type: 'forceSubmission' }],
-      };
+    case 'timerTick':
+      return timerTickHandler(state);
   }
   return state;
 };
@@ -53,8 +69,8 @@ const selectedReducer = (state: IQuizState, action: Action): IQuizState => {
     return {
       ...state,
       data: {
-        ...state.data,
-        selectedAnswers: action.payload.selections,
+        ...state?.data,
+        selectedAnswers: action?.payload?.selections,
       },
     };
   }
@@ -74,32 +90,31 @@ const selectedReducer = (state: IQuizState, action: Action): IQuizState => {
     return {
       ...state,
       status: nextStatus,
-      action: [
-        { type: nextStatus === 'tryagain' ? 'resetTimer' : 'stopTimer' },
-      ],
       data: {
-        ...state.data,
+        ...state?.data,
         attemptCount:
           nextStatus === 'tryagain'
-            ? state.data.attemptCount + 1
-            : state.data.attemptCount,
+            ? state?.data?.attemptCount + 1
+            : state?.data?.attemptCount,
         score:
           // Only increase score if answer is correct.
           nextStatus === 'correct'
             ? state?.data?.score + 1
             : state?.data?.score,
         submittedAnswerMap: {
-          ...state.data.submittedAnswerMap,
-          [state.data.questionList[currentIndex].id]: action.payload.selections,
+          ...state?.data?.submittedAnswerMap,
+          [state?.data?.questionList?.[currentIndex]?.id]:
+            action?.payload?.selections,
         },
+        timeLeft:
+          nextStatus === 'tryagain'
+            ? currentQuestion?.allowedTime
+            : state?.data?.timeLeft,
       },
     };
   }
-  if (action?.type === 'timeOut') {
-    return {
-      ...state,
-      action: [{ type: 'forceSubmission' }],
-    };
+  if (action?.type === 'timerTick') {
+    return timerTickHandler(state);
   }
   return state;
 };
@@ -118,13 +133,17 @@ const correctReducer = (state: IQuizState, action: Action): IQuizState => {
     return {
       ...state,
       status: hasMoreQuestions ? 'idle' : 'done',
-      action: [{ type: hasMoreQuestions ? 'startTimer' : 'goToResults' }],
+      action: hasMoreQuestions ? [] : [{ type: 'goToResults' }],
       data: {
         ...state.data,
         attemptCount: hasMoreQuestions ? 1 : state?.data?.attemptCount,
         currentQuestionIndex: hasMoreQuestions
           ? state?.data?.currentQuestionIndex + 1
           : state?.data?.currentQuestionIndex,
+        timeLeft: hasMoreQuestions
+          ? state?.data?.questionList?.[state?.data?.currentQuestionIndex + 1]
+              ?.allowedTime
+          : state?.data?.timeLeft,
       },
     };
   }
@@ -132,22 +151,26 @@ const correctReducer = (state: IQuizState, action: Action): IQuizState => {
 };
 
 const tryagainReducer = (state: IQuizState, action: Action): IQuizState => {
+  const timeLeft = state?.data?.timeLeft;
   if (action?.type === 'selectAnswer') {
     return {
       ...state,
       status: 'selected',
       action: [],
       data: {
-        ...state.data,
+        ...state?.data,
         selectedAnswers: action?.payload?.selections,
       },
     };
+  }
+  if (action?.type === 'timerTick') {
+    return timerTickHandler(state);
   }
   return state;
 };
 
 const doneReducer = (state: IQuizState, action: Action): IQuizState => {
-  if (action.type === 'playAgain') {
+  if (action?.type === 'playAgain') {
     return {
       ...initalQuizState,
     };
@@ -156,19 +179,18 @@ const doneReducer = (state: IQuizState, action: Action): IQuizState => {
 };
 
 const startReducer = (state: IQuizState, action: Action): IQuizState => {
-  if (action.type === 'begin') {
+  if (action?.type === 'begin') {
     return {
       ...state,
       status: 'idle',
-      action: [{ type: 'startTimer' }],
     };
   }
   return state;
 };
 
 /**
- * Switch on state.status to move the machine state to the top level in order
- * to explicity create a state machine as recommended in Redux style guide.
+ * Switch on state.status to explicity create a state machine with the reducer
+ * as recommended in Redux style guide.
  * @see https://redux.js.org/style-guide#treat-reducers-as-state-machines
  * @param state IQuizState
  * @param action Action
