@@ -43,6 +43,7 @@ export interface IAnswerOption {
 export interface IQuestion {
   id: string;
   allowedAttemptCount: number;
+  allowedTime: number;
   answerOptionList: IAnswerOption[];
   correctAnswerKeyList: string[];
   hintText: string;

@@ -33,6 +33,11 @@ const idleReducer = (state: IQuizState, action: Action): IQuizState => {
           selectedAnswers: action.payload.selections,
         },
       };
+    case 'timeOut':
+      return {
+        ...state,
+        action: [{ type: 'forceSubmission' }],
+      };
   }
   return state;
 };
@@ -78,11 +83,22 @@ const selectedReducer = (state: IQuizState, action: Action): IQuizState => {
           nextStatus === 'tryagain'
             ? state.data.attemptCount + 1
             : state.data.attemptCount,
+        score:
+          // Only increase score if answer is correct.
+          nextStatus === 'correct'
+            ? state?.data?.score + 1
+            : state?.data?.score,
         submittedAnswerMap: {
           ...state.data.submittedAnswerMap,
           [state.data.questionList[currentIndex].id]: action.payload.selections,
         },
       },
+    };
+  }
+  if (action?.type === 'timeOut') {
+    return {
+      ...state,
+      action: [{ type: 'forceSubmission' }],
     };
   }
   return state;
@@ -109,11 +125,6 @@ const correctReducer = (state: IQuizState, action: Action): IQuizState => {
         currentQuestionIndex: hasMoreQuestions
           ? state?.data?.currentQuestionIndex + 1
           : state?.data?.currentQuestionIndex,
-        score:
-          // Only increase score if answer is correct.
-          state.status === 'correct'
-            ? state?.data?.score + 1
-            : state?.data?.score,
       },
     };
   }

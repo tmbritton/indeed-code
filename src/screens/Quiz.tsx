@@ -38,6 +38,13 @@ const ButtonWrap = styled('div')`
   margin-top: auto;
 `;
 
+/**
+ * Handle clicking on answer options.
+ * @param value
+ * @param selected
+ * @param multipleAllowed
+ * @param dispatch
+ */
 const optionClickHandler = (
   value: string,
   selected: string[],
@@ -80,6 +87,12 @@ const isButtonDisabled = (status: QuizStatus) => {
   return true;
 };
 
+/**
+ * Button click handler. Callback behavior depends on reducer status.
+ * @param status
+ * @param dispatch
+ * @param selections
+ */
 const buttonClickHandler = (
   status: QuizStatus,
   dispatch: Dispatch<Action>,
@@ -98,14 +111,33 @@ const buttonClickHandler = (
   }
 };
 
+/**
+ * Callback for timer setInterval.
+ * @param timerCount
+ * @param setTimerCount
+ * @param dispatch
+ */
+const timerCallback = (
+  timerCount: number,
+  setTimerCount: Dispatch<React.SetStateAction<number>>,
+  dispatch: Dispatch<Action>
+) => {
+  const count = timerCount - 1;
+  setTimerCount(count);
+  if (count === 0) {
+    dispatch({ type: 'timeOut' });
+  }
+};
+
 const Quiz: FC<{}> = () => {
   const [state, dispatch] = useQuizContext();
-  const navigate = useNavigate();
   const index = state?.data?.currentQuestionIndex;
   const question = state?.data?.questionList?.[index];
+  const [timerCount, setTimerCount] = useState(question?.allowedTime);
+  const navigate = useNavigate();
   const allowMultipleAnswers = question?.correctAnswerKeyList?.length > 1;
   const hasMoreQuestions =
-    state.data.questionList.length - 1 > state.data.currentQuestionIndex;
+    state?.data?.questionList?.length - 1 > state?.data?.currentQuestionIndex;
   const selected = state?.data?.selectedAnswers;
 
   /**
@@ -119,10 +151,40 @@ const Quiz: FC<{}> = () => {
   }, [state.status]);
 
   useEffect(() => {
+    let timer: number;
     if (state.action.length) {
       state.action.forEach((action) => {
+        console.log(action.type);
         if (action.type === 'goToResults') {
           navigate('/results');
+        }
+        if (action.type === 'startTimer') {
+          timer = window.setInterval(
+            timerCallback,
+            1000,
+            timerCount,
+            setTimerCount,
+            dispatch
+          );
+        }
+        if (action.type === 'forceSubmission') {
+          dispatch({
+            type: 'submitAnswer',
+            payload: { selections: selected },
+          });
+        }
+        if (action.type === 'stopTimer') {
+          clearInterval(timer);
+        }
+        if (action.type === 'resetTimer') {
+          clearInterval(timer);
+          timer = window.setInterval(
+            timerCallback,
+            1000,
+            timerCount,
+            setTimerCount,
+            dispatch
+          );
         }
       });
     }
@@ -184,6 +246,9 @@ const Quiz: FC<{}> = () => {
       <ButtonWrap>
         <Text textStyle="italic" color="deemphasize" element="p">
           Attempt {state?.data?.attemptCount} / {question.allowedAttemptCount}
+        </Text>
+        <Text color="deemphasize" element="p">
+          Timer: {timerCount}
         </Text>
         <Button
           disabled={isButtonDisabled(state.status)}

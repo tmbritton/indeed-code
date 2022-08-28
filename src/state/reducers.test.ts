@@ -66,6 +66,7 @@ test('When in selected status, reducer should transition to correct status when 
     action: [],
     data: {
       currentQuestionIndex: 0,
+      score: 0,
       questionList: questionData,
     },
   };
@@ -75,6 +76,7 @@ test('When in selected status, reducer should transition to correct status when 
     action: [{ type: 'stopTimer' }],
     data: {
       currentQuestionIndex: 0,
+      score: 1,
       questionList: questionData,
       submittedAnswerMap: {
         [questionData[0].id]: questionData[0].correctAnswerKeyList,
@@ -161,7 +163,7 @@ test('When in correct status and there are more questions a continue action shou
       attemptCount: 2,
       currentQuestionIndex: 0,
       questionList: questionData,
-      score: 0,
+      score: 1,
       submittedAnswerMap: {
         [questionData[0].id]: questionData[0].correctAnswerKeyList,
       },
@@ -195,7 +197,7 @@ test('When in correct status and there are no more questions a continue action s
     action: [{ type: 'stopTimer' }],
     data: {
       currentQuestionIndex: questionData.length - 1,
-      score: 1,
+      score: 2,
       questionList: questionData,
     },
   };
@@ -317,6 +319,38 @@ test('When in start status and a begin action is sent to the reducer it should t
   expect(
     QuizReducer(initalQuizState, {
       type: 'begin',
+    })
+  ).toEqual(expectedState);
+});
+
+test('When in idle state, a timeout should force answer submission.', () => {
+  const state = {
+    status: 'idle',
+    action: [],
+  };
+  const expectedState = {
+    status: 'idle',
+    action: [{ type: 'forceSubmission' }],
+  };
+  expect(
+    QuizReducer(state, {
+      type: 'timeOut',
+    })
+  ).toEqual(expectedState);
+});
+
+test('When in selected state, a timeout should force answer submission.', () => {
+  const state = {
+    status: 'selected',
+    action: [],
+  };
+  const expectedState = {
+    status: 'selected',
+    action: [{ type: 'forceSubmission' }],
+  };
+  expect(
+    QuizReducer(state, {
+      type: 'timeOut',
     })
   ).toEqual(expectedState);
 });

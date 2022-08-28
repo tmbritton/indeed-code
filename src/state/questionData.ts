@@ -4,6 +4,7 @@ const questionData: IQuestion[] = [
   {
     id: '723bb143-3b83-4149-b433-55929bb0c73d',
     allowedAttemptCount: 2,
+    allowedTime: 10,
     questionText:
       'If you have 10 mangos and another person gives you 12 more, how many mangos will you have in total?',
     hintText: '10 + 12',
@@ -29,7 +30,8 @@ const questionData: IQuestion[] = [
   },
   {
     id: '05ec58ed-ebb6-4aa6-9bc1-0df53745ce56',
-    allowedAttemptCount: 2,
+    allowedAttemptCount: 3,
+    allowedTime: 15,
     questionText:
       'If a train is supposed to reach the station at 4:10am. but it is 35 minutes late, at what time will the train reach the station?',
     hintText: '10 + 35',
