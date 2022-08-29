@@ -68,7 +68,7 @@ const Results: FC<{}> = () => {
 
   // Get high score from localStorage on pageload.
   useEffect(() => {
-    const cachedData = localStorage.getItem(lsKey);
+    const cachedData = localStorage?.getItem(lsKey);
     const cachedScore = cachedData ? JSON.parse(cachedData) : null;
     const currentScore: IScore = {
       correct: score,
@@ -80,15 +80,15 @@ const Results: FC<{}> = () => {
         setHighScore(cachedScore);
       } else if (cachedScore.correct < currentScore.correct) {
         setHighScore(currentScore);
-        localStorage.setItem(lsKey, JSON.stringify(currentScore));
+        localStorage?.setItem(lsKey, JSON.stringify(currentScore));
       } else {
         // Let's use the most recent score if the correct totals are equal.
         setHighScore(currentScore);
-        localStorage.setItem(lsKey, JSON.stringify(currentScore));
+        localStorage?.setItem(lsKey, JSON.stringify(currentScore));
       }
     } else {
       setHighScore(currentScore);
-      localStorage.setItem(lsKey, JSON.stringify(currentScore));
+      localStorage?.setItem(lsKey, JSON.stringify(currentScore));
     }
   }, []);
 
