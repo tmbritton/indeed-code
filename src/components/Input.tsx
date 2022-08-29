@@ -1,7 +1,7 @@
 /**
  * Creating a custom, yet accessible, input so I can better control styling.
  * Styles based on Aria best practices example at w3.org.
- * @see https://www.w3.org/TR/2017/WD-wai-aria-practices-1.1-20170628/examples/radio/radio-1/radio-1.html
+ * @see https://www.w3.org/WAI/ARIA/apg/example-index/radio/radio.html
  */
 import { FC } from 'react';
 import theme from '../theme';
@@ -14,6 +14,8 @@ const StyledInput = styled('div')`
   cursor: pointer;
   position: relative;
   margin-bottom: 1rem;
+  border-radius: 12px;
+  transition: background-color 0.2s ease-in-out;
   &::before {
     display: inline-block;
     width: 1.5rem;
@@ -58,14 +60,15 @@ const StyledInput = styled('div')`
     cursor: not-allowed;
   }
   &:hover:not(.disabled) {
+    background-color: #eee;
     &::before {
       border-color: ${theme.colors.primary};
+      border-width: 2px;
+      background-color: #eee;
     }
   }
   &:focus-visible {
-    &::before {
-      outline: 3px solid ${theme.colors.highlight};
-    }
+    outline: 3px solid ${theme.colors.highlight};
   }
 `;
 
@@ -126,25 +129,6 @@ const keyPressHandler = (
   }
 };
 
-/**
- * Get tabIndex value.
- * @param disabled Boolean indicating if input is disabled.
- * @param checked Boolean indicating if input is checked.
- * @returns undefined if disabled, -1 or 0 depending on checked.
- */
-const getTabIndex = (
-  disabled: boolean,
-  checked: boolean
-): number | undefined => {
-  if (disabled) {
-    return undefined;
-  }
-  if (checked) {
-    return -1;
-  }
-  return 1;
-};
-
 const Input: FC<Props> = ({
   children,
   value,
@@ -158,7 +142,7 @@ const Input: FC<Props> = ({
     <StyledInput
       role={type}
       aria-checked={checked ? 'true' : 'false'}
-      tabIndex={getTabIndex(disabled, checked)}
+      tabIndex={disabled ? undefined : 0}
       onClick={() => clickHandler(value, disabled, onClick)}
       onKeyPress={(e) => keyPressHandler(e, value, disabled, onClick)}
       className={`input ${checked ? 'checked' : ''} ${

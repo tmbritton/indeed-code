@@ -13,6 +13,14 @@ import {
   selectQuestionList,
 } from '../store/selectors';
 
+const messageList = [
+  'Did you even try?',
+  "I'm sure you have other talents.",
+  "You'll get it next time!",
+  'Hey! Pretty good!',
+  "You're a Trivia master!",
+];
+
 const StyledButton = styled(Button)`
   margin-top: auto;
   @media (min-width: ${theme.breakpoints.sm}) {
@@ -23,7 +31,7 @@ const StyledButton = styled(Button)`
 
 const formatDate = (timeStamp: number): string => {
   const date = new Date(timeStamp);
-  return `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
+  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 };
 
 /**
@@ -94,7 +102,7 @@ const Results: FC<{}> = () => {
         style={{ margin: '0 auto' }}
       />
       <Text element="h1" textStyle="heading">
-        You're a Trivia master!
+        {messageList[score]}
       </Text>
       <Text>
         You got {score} out of {questionList?.length} right!

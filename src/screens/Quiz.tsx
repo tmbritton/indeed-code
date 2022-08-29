@@ -174,7 +174,7 @@ const Quiz: FC<{}> = () => {
    */
   useEffect(() => {
     const timer = window.setInterval(() => {
-      dispatch({ type: 'timerTick' });
+      //dispatch({ type: 'timerTick' });
     }, 1000);
     return () => {
       window.clearInterval(timer);
@@ -226,7 +226,10 @@ const Quiz: FC<{}> = () => {
           Please select all that apply.
         </Text>
       ) : null}
-      <AnswerOptionsWrap role="radiogroup">
+      <AnswerOptionsWrap role="radiogroup" aria-labelledby="assistive">
+        <div id="assistive" style={{ display: 'none' }}>
+          Please choose your answer.
+        </div>
         {currentQuestion.answerOptionList.map((option, index) => {
           return (
             <Input

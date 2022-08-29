@@ -7,6 +7,7 @@ interface Props {
   color?: 'default' | 'success' | 'failure' | 'deemphasize';
   element?: 'h1' | 'h2' | 'p' | 'span';
   className?: string;
+  id?: string;
 }
 
 const Text: FC<Props> = ({
@@ -15,6 +16,7 @@ const Text: FC<Props> = ({
   color = 'default',
   element = 'p',
   className = '',
+  id = '',
 }) => {
   // Do the styled component here so we can dynamically define the HTML tag.
   const StyledTag = styled(element)`
@@ -49,7 +51,7 @@ const Text: FC<Props> = ({
       font-weight: ${theme.fontWeights.normal};
       line-height: 1.5;
       margin-bottom: 1rem;
-      text-style: italic;
+      font-style: italic;
     }
     &.color-default {
       color: ${theme.colors.text};
@@ -66,7 +68,10 @@ const Text: FC<Props> = ({
   `;
 
   return (
-    <StyledTag className={`textStyle-${textStyle} color-${color} ${className}`}>
+    <StyledTag
+      className={`textStyle-${textStyle} color-${color} ${className}`}
+      id={id}
+    >
       {children}
     </StyledTag>
   );
