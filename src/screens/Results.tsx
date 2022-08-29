@@ -73,7 +73,7 @@ const Results: FC<{}> = () => {
       count: questionList.length,
       timeStamp: Date.now(),
     };
-    if (localStorage) {
+    try {
       const cachedData = localStorage?.getItem(lsKey);
       const cachedScore = cachedData ? JSON.parse(cachedData) : null;
       if (cachedScore) {
@@ -91,7 +91,7 @@ const Results: FC<{}> = () => {
         setHighScore(currentScore);
         localStorage?.setItem(lsKey, JSON.stringify(currentScore));
       }
-    } else {
+    } catch (e) {
       setHighScore(currentScore);
     }
   }, []);
