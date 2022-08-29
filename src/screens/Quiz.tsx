@@ -174,7 +174,7 @@ const Quiz: FC<{}> = () => {
    */
   useEffect(() => {
     const timer = window.setInterval(() => {
-      //dispatch({ type: 'timerTick' });
+      dispatch({ type: 'timerTick' });
     }, 1000);
     return () => {
       window.clearInterval(timer);
