@@ -145,6 +145,7 @@ const correctReducer = (state: IQuizState, action: Action): IQuizState => {
           ? state?.data?.questionList?.[state?.data?.currentQuestionIndex + 1]
               ?.allowedTime
           : state?.data?.timeLeft,
+        selectedAnswers: [],
       },
     };
   }

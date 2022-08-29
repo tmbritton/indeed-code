@@ -26,19 +26,26 @@ const StyledInput = styled('div')`
     content: '';
   }
   &.checked {
-    &::after {
-      content: '';
-      position: absolute;
-      top: 6px;
-      left: 6px;
-      width: 0.75rem;
-      height: 0.75rem;
-      background-color: ${theme.colors.primary};
-      border-radius: 100%;
+    &::before {
+      background: radial-gradient(
+        ellipse at center,
+        ${theme.colors.primary} 0%,
+        ${theme.colors.primary} 40%,
+        #ffffff 45%,
+        #ffffff 100%
+      );
+      background-position: center;
+      background-repeat: no-repeat;
     }
     &.disabled {
-      &::after {
-        background-color: ${theme.colors.disabled};
+      &::before {
+        background: radial-gradient(
+          ellipse at center,
+          ${theme.colors.disabled} 0%,
+          ${theme.colors.disabled} 40%,
+          #ffffff 45%,
+          #ffffff 100%
+        );
       }
     }
     &:not(.disabled) {
@@ -97,6 +104,14 @@ const clickHandler = (
   }
 };
 
+/**
+ * Select option on pressing enter or space.
+ * @param event
+ * @param value
+ * @param disabled
+ * @param onClick
+ * @returns
+ */
 const keyPressHandler = (
   event: React.KeyboardEvent<HTMLDivElement>,
   value: string,
