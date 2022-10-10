@@ -54,16 +54,16 @@ const Text: FC<Props> = ({
       font-style: italic;
     }
     &.color-default {
-      color: ${theme.colors.text};
+      color: ${theme.colors.foundational.charcoal};
     }
     &.color-success {
-      color: ${theme.colors.success};
+      color: ${theme.colors.functional.success};
     }
     &.color-failure {
-      color: ${theme.colors.failure};
+      color: ${theme.colors.functional.failure};
     }
     &.color-deemphasize {
-      color: ${theme.colors.disabled};
+      color: ${theme.colors.functional.grey};
     }
   `;
 

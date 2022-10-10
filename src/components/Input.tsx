@@ -23,7 +23,7 @@ const StyledInput = styled('div')`
     border-radius: 100%;
     border-width: 1px;
     border-style: solid;
-    border-color: ${theme.colors.border};
+    border-color: ${theme.colors.functional.grey};
     transition: border-color 0.2s ease-in-out;
     content: '';
   }
@@ -31,8 +31,8 @@ const StyledInput = styled('div')`
     &::before {
       background: radial-gradient(
         ellipse at center,
-        ${theme.colors.primary} 0%,
-        ${theme.colors.primary} 40%,
+        ${theme.colors.foundational.blue} 0%,
+        ${theme.colors.foundational.blue} 40%,
         #ffffff 45%,
         #ffffff 100%
       );
@@ -43,8 +43,8 @@ const StyledInput = styled('div')`
       &::before {
         background: radial-gradient(
           ellipse at center,
-          ${theme.colors.disabled} 0%,
-          ${theme.colors.disabled} 40%,
+          ${theme.colors.functional.grey} 0%,
+          ${theme.colors.functional.grey} 40%,
           #ffffff 45%,
           #ffffff 100%
         );
@@ -52,7 +52,7 @@ const StyledInput = styled('div')`
     }
     &:not(.disabled) {
       &::before {
-        border-color: ${theme.colors.primary};
+        border-color: ${theme.colors.foundational.blue};
       }
     }
   }
@@ -62,13 +62,13 @@ const StyledInput = styled('div')`
   &:hover:not(.disabled) {
     background-color: #eee;
     &::before {
-      border-color: ${theme.colors.primary};
+      border-color: ${theme.colors.foundational.blue}};
       border-width: 2px;
       background-color: #eee;
     }
   }
   &:focus-visible {
-    outline: 3px solid ${theme.colors.highlight};
+    outline: 3px solid ${theme.colors.expressive.aqua[80]};
   }
 `;
 
@@ -77,7 +77,7 @@ const Label = styled(Text)`
     margin-left: 0.75rem;
     margin-bottom: 0;
     &.disabled {
-      color: ${theme.colors.textDisabled};
+      color: ${theme.colors.expressive.neutral[60]};
     }
   }
 `;
