@@ -4,7 +4,13 @@ import styled from '@emotion/styled';
 
 interface Props {
   textStyle?: 'body' | 'heading' | 'heading2' | 'feedback' | 'italic';
-  color?: 'default' | 'success' | 'failure' | 'deemphasize';
+  color?:
+    | 'default'
+    | 'success'
+    | 'failure'
+    | 'deemphasize'
+    | 'inverted'
+    | 'informational';
   element?: 'h1' | 'h2' | 'p' | 'span';
   className?: string;
   id?: string;
@@ -64,6 +70,12 @@ const Text: FC<Props> = ({
     }
     &.color-deemphasize {
       color: ${theme.colors.functional.grey};
+    }
+    &.color-inverted {
+      color: ${theme.colors.expressive.neutral[0]};
+    }
+    &.color-informational {
+      color: ${theme.colors.expressive.earth[70]};
     }
   `;
 

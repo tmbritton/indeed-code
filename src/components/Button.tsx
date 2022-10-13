@@ -13,8 +13,9 @@ const StyledButton = styled.button`
   text-align: center;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  width: 100%;
   &:hover {
-    background-color: ${theme.colors.expressive.blue[60]};
+    background-color: ${theme.colors.expressive.blue[70]};
   }
   &:disabled {
     cursor: not-allowed;
@@ -22,7 +23,10 @@ const StyledButton = styled.button`
     color: ${theme.colors.expressive.neutral[20]};
   }
   &:focus-visible {
-    outline: 3px solid ${theme.colors.expressive.aqua[80]};
+    outline: 3px solid ${theme.colors.expressive.aqua[50]};
+  }
+  @media (min-width: ${theme.breakpoints.sm}) {
+    width: auto;
   }
 `;
 

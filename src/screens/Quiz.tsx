@@ -4,6 +4,8 @@ import { Action } from '../../types';
 import { useNavigate } from 'react-router';
 import Text from '../components/Text';
 import Button from '../components/Button';
+import Header from '../components/Header';
+import Card from '../components/Card';
 import { ContentWrapper } from '../components/LayoutComponents';
 import Input from '../components/Input';
 import { getSelectedState } from '../utils';
@@ -43,18 +45,13 @@ const AnswerOptionsWrap = styled('div')`
   display: flex;
   flex-direction: column;
   width: 100%;
+  column-gap: 2%;
   @media (min-width: ${theme.breakpoints.sm}) {
     flex-direction: row;
     flex-wrap: wrap;
     & > .input {
-      flex: 1 0 50%;
+      flex: 0 1 48%;
     }
-  }
-`;
-
-const QuizWrapper = styled(ContentWrapper)`
-  && {
-    text-align: left;
   }
 `;
 
@@ -71,12 +68,14 @@ const ButtonWrap = styled('div')`
 `;
 
 const InfoTextWrap = styled('div')`
+  text-align: left;
   display: flex;
-  flex-direction: column;
-  @media (min-width: ${theme.breakpoints.sm}) {
-    flex-direction: row;
-    justify-content: space-between;
-  }
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const FeedbackTextWrap = styled('div')`
+  text-align: left;
 `;
 
 /**
@@ -211,79 +210,88 @@ const Quiz: FC<{}> = () => {
   }, [actionList]);
 
   return (
-    <QuizWrapper>
-      <TitleWrapper>
-        <Text textStyle="heading2" element="h1">
-          Question {currentIndex + 1} of {questionList?.length}
-        </Text>
-        <Text textStyle="heading2" element="p">
-          Score: {score}
-        </Text>
-      </TitleWrapper>
-      <QuestionText>{currentQuestion?.questionText}</QuestionText>
-      {allowMultipleAnswers ? (
-        <Text textStyle="italic" color="deemphasize">
-          Please select all that apply.
-        </Text>
-      ) : null}
-      <AnswerOptionsWrap role="radiogroup" aria-labelledby="assistive">
-        <div id="assistive" style={{ display: 'none' }}>
-          Please choose your answer.
-        </div>
-        {currentQuestion.answerOptionList.map((option, index) => {
-          return (
-            <Input
-              onClick={(value) =>
-                optionClickHandler(
-                  value,
-                  selectedAnswers,
-                  allowMultipleAnswers,
-                  dispatch
-                )
+    <>
+      <Header title={`Question ${currentIndex + 1}/${questionList?.length}`} />
+      <ContentWrapper>
+        <Card>
+          <TitleWrapper>
+            <Text textStyle="heading2" element="p">
+              Score: {score}
+            </Text>
+          </TitleWrapper>
+          <QuestionText>{currentQuestion?.questionText}</QuestionText>
+          {allowMultipleAnswers ? (
+            <QuestionText textStyle="italic" color="deemphasize">
+              Please select all that apply.
+            </QuestionText>
+          ) : null}
+          <AnswerOptionsWrap role="radiogroup" aria-labelledby="assistive">
+            <div id="assistive" style={{ display: 'none' }}>
+              Please choose your answer.
+            </div>
+            {currentQuestion.answerOptionList.map((option, index) => {
+              return (
+                <Input
+                  onClick={(value) =>
+                    optionClickHandler(
+                      value,
+                      selectedAnswers,
+                      allowMultipleAnswers,
+                      dispatch
+                    )
+                  }
+                  key={option?.id}
+                  value={option?.id}
+                  checked={selectedAnswers.includes(option.id)}
+                  disabled={status === 'correct' || status === 'incorrect'}
+                  id={option?.id}
+                >
+                  {option.answerText}
+                </Input>
+              );
+            })}
+          </AnswerOptionsWrap>
+          <FeedbackTextWrap>
+            {status === 'correct' ? (
+              <Text textStyle="feedback" color="success">
+                You got it right!
+              </Text>
+            ) : null}
+            {status === 'incorrect' || status === 'tryagain' ? (
+              <Text textStyle="feedback" color="failure">
+                You got it wrong ☹️
+              </Text>
+            ) : null}
+            {attemptCount > 1 ? (
+              <Text textStyle="italic" color="deemphasize">
+                Hint: {currentQuestion.hintText}
+              </Text>
+            ) : null}
+          </FeedbackTextWrap>
+          <ButtonWrap>
+            <InfoTextWrap>
+              <Text textStyle="italic" color="informational" element="p">
+                Attempt {attemptCount} / {currentQuestion.allowedAttemptCount}
+              </Text>
+              <Text
+                color={timeRemaining > 3 ? 'informational' : 'failure'}
+                element="p"
+              >
+                Timer: {timeRemaining}
+              </Text>
+            </InfoTextWrap>
+            <Button
+              disabled={isButtonDisabled(status)}
+              onClick={() =>
+                buttonClickHandler(status, dispatch, selectedAnswers)
               }
-              key={option?.id}
-              value={option?.id}
-              checked={selectedAnswers.includes(option.id)}
-              disabled={status === 'correct' || status === 'incorrect'}
-              id={option?.id}
             >
-              {option.answerText}
-            </Input>
-          );
-        })}
-      </AnswerOptionsWrap>
-      {status === 'correct' ? (
-        <Text textStyle="feedback" color="success">
-          You got it right!
-        </Text>
-      ) : null}
-      {status === 'incorrect' || status === 'tryagain' ? (
-        <Text textStyle="feedback" color="failure">
-          You got it wrong ☹️
-        </Text>
-      ) : null}
-      {attemptCount > 1 ? (
-        <Text textStyle="italic" color="deemphasize">
-          Hint: {currentQuestion.hintText}
-        </Text>
-      ) : null}
-      <ButtonWrap>
-        <InfoTextWrap>
-          <Text textStyle="italic" color="deemphasize" element="p">
-            Attempt {attemptCount} / {currentQuestion.allowedAttemptCount}
-          </Text>
-          <Text color="deemphasize" element="p">
-            Timer: {timeRemaining}
-          </Text>
-        </InfoTextWrap>
-        <Button
-          disabled={isButtonDisabled(status)}
-          onClick={() => buttonClickHandler(status, dispatch, selectedAnswers)}
-        >
-          {getButtonText(status, hasMoreQuestions)}
-        </Button>
-      </ButtonWrap>
-    </QuizWrapper>
+              {getButtonText(status, hasMoreQuestions)}
+            </Button>
+          </ButtonWrap>
+        </Card>
+      </ContentWrapper>
+    </>
   );
 };
 

@@ -1,11 +1,13 @@
 import { FC, Dispatch } from 'react';
 import { ContentWrapper } from '../components/LayoutComponents';
+import Header from '../components/Header';
 import Text from '../components/Text';
 import Button from '../components/Button';
 import styled from '@emotion/styled';
 import { Action } from '../../types';
 import { useNavigate, NavigateFunction } from 'react-router';
 import { useAppDispatch } from '../store/hooks';
+import Card from '../components/Card';
 import theme from '../theme';
 
 const StyledButton = styled(Button)`
@@ -32,25 +34,26 @@ const Start: FC<{}> = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   return (
-    <ContentWrapper>
-      <img
-        src="http://placekitten.com/300/200"
-        alt="Kitten photo"
-        width="300"
-        height="200"
-        style={{ margin: '0 auto' }}
-      />
-      <Text element="h1" textStyle="heading">
-        Ready to take quiz?
-      </Text>
-      <Text>Click the button to begin!</Text>
-      <StyledButton
-        onClick={() => clickHandler(dispatch, navigate)}
-        tabIndex={0}
-      >
-        Start Quiz!
-      </StyledButton>
-    </ContentWrapper>
+    <>
+      <Header title="Start Quiz" />
+      <ContentWrapper>
+        <Card
+          imageUrl="http://placekitten.com/80/80"
+          imageAlt="A cute kitten image to start the quiz."
+        >
+          <Text element="h1" textStyle="heading">
+            Ready to take quiz?
+          </Text>
+          <Text>Click the button to begin!</Text>
+          <StyledButton
+            onClick={() => clickHandler(dispatch, navigate)}
+            tabIndex={0}
+          >
+            Start Quiz!
+          </StyledButton>
+        </Card>
+      </ContentWrapper>
+    </>
   );
 };
 

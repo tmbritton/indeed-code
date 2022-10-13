@@ -14,12 +14,14 @@ const StyledInput = styled('div')`
   cursor: pointer;
   position: relative;
   margin-bottom: 1rem;
-  border-radius: 12px;
+  border-radius: 2px;
+  background-color: ${theme.colors.expressive.aqua[20]};
+  padding: 1rem;
   transition: background-color 0.2s ease-in-out;
   &::before {
     display: inline-block;
-    width: 1.5rem;
-    height: 1.5rem;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
     border-radius: 100%;
     border-width: 1px;
     border-style: solid;
@@ -28,47 +30,49 @@ const StyledInput = styled('div')`
     content: '';
   }
   &.checked {
+    background-color: ${theme.colors.expressive.aqua[80]};
+    color: ${theme.colors.expressive.neutral[0]};
+    box-shadow: ${theme.boxShadow};
     &::before {
       background: radial-gradient(
         ellipse at center,
-        ${theme.colors.foundational.blue} 0%,
-        ${theme.colors.foundational.blue} 40%,
-        #ffffff 45%,
-        #ffffff 100%
+        ${theme.colors.expressive.neutral[0]} 0%,
+        ${theme.colors.expressive.neutral[0]} 40%,
+        ${theme.colors.expressive.aqua[80]} 45%,
+        ${theme.colors.expressive.aqua[80]} 100%
       );
       background-position: center;
       background-repeat: no-repeat;
     }
     &.disabled {
+      background-color: ${theme.colors.functional.grey};
+      color: ${theme.colors.expressive.neutral[10]};
       &::before {
+        border-color: ${theme.colors.expressive.neutral[20]};
         background: radial-gradient(
           ellipse at center,
-          ${theme.colors.functional.grey} 0%,
-          ${theme.colors.functional.grey} 40%,
-          #ffffff 45%,
-          #ffffff 100%
+          ${theme.colors.expressive.neutral[40]} 0%,
+          ${theme.colors.expressive.neutral[40]} 40%,
+          ${theme.colors.functional.grey} 45%,
+          ${theme.colors.functional.grey} 100%
         );
       }
     }
     &:not(.disabled) {
       &::before {
-        border-color: ${theme.colors.foundational.blue};
+        border-color: ${theme.colors.foundational.white};
       }
     }
   }
   &.disabled {
+    background-color: ${theme.colors.expressive.neutral[20]};
     cursor: not-allowed;
   }
-  &:hover:not(.disabled) {
-    background-color: #eee;
-    &::before {
-      border-color: ${theme.colors.foundational.blue}};
-      border-width: 2px;
-      background-color: #eee;
-    }
+  &:hover:not(.disabled):not(.checked) {
+    background-color: ${theme.colors.expressive.aqua[40]};
   }
   &:focus-visible {
-    outline: 3px solid ${theme.colors.expressive.aqua[80]};
+    outline: 3px solid ${theme.colors.expressive.aqua[50]};
   }
 `;
 
@@ -76,8 +80,15 @@ const Label = styled(Text)`
   && {
     margin-left: 0.75rem;
     margin-bottom: 0;
+    text-align: left;
+    &.checked {
+      color: ${theme.colors.expressive.neutral[0]};
+    }
     &.disabled {
       color: ${theme.colors.expressive.neutral[60]};
+    }
+    &.checked&.disabled {
+      color: ${theme.colors.expressive.neutral[40]};
     }
   }
 `;
@@ -150,7 +161,12 @@ const Input: FC<Props> = ({
       }`}
       id={id}
     >
-      <Label className={`label ${disabled ? 'disabled' : ''}`} element="span">
+      <Label
+        className={`label ${disabled ? 'disabled' : ''} ${
+          checked ? 'checked' : ''
+        }`}
+        element="span"
+      >
         {children}
       </Label>
     </StyledInput>

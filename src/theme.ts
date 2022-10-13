@@ -111,4 +111,5 @@ export default {
     lg: '1200px',
     xl: '1536px',
   },
+  boxShadow: '0px 10px 20px 0px rgba(0, 0, 0, 0.15)',
 };

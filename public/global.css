@@ -388,3 +388,9 @@ table {
 textarea {
   white-space: revert;
 }
+
+/*
+  Some developer-defined non-3rd party foundatioal styles */
+body {
+  background-color: #f3f2f1;
+}
