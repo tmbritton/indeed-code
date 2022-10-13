@@ -78,6 +78,34 @@ const FeedbackTextWrap = styled('div')`
   text-align: left;
 `;
 
+const QuestionCard = styled(Card)`
+  transition: transform 0.2s ease-in-out;
+  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  &.current {
+    transform: translatex(0px);
+  }
+  &.previous {
+    transform: translatex(100vw);
+  }
+  &.next {
+    transform: translatex(-100vw);
+  }
+  @media (min-width: ${theme.breakpoints.md}) {
+    left: 0;
+    min-width: 100%;
+  }
+`;
+
+const QuizContentWrapper = styled(ContentWrapper)`
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+`;
+
 /**
  * Handle clicking on answer options.
  * @param value
@@ -160,7 +188,6 @@ const Quiz: FC<{}> = () => {
   const status = useAppSelector(selectStatus);
   const actionList = useAppSelector(selectActionList);
   const currentIndex = useAppSelector(selectCurrentIndex);
-  const currentQuestion = useAppSelector(selectCurrentQuestion);
   const allowMultipleAnswers = useAppSelector(selectAllowMultipleAnswers);
   const hasMoreQuestions = useAppSelector(selectHasMoreQuestions);
   const selectedAnswers = useAppSelector(selectSelectedAnswers);
@@ -173,7 +200,7 @@ const Quiz: FC<{}> = () => {
    */
   useEffect(() => {
     const timer = window.setInterval(() => {
-      dispatch({ type: 'timerTick' });
+      //dispatch({ type: 'timerTick' });
     }, 1000);
     return () => {
       window.clearInterval(timer);
@@ -212,85 +239,93 @@ const Quiz: FC<{}> = () => {
   return (
     <>
       <Header title={`Question ${currentIndex + 1}/${questionList?.length}`} />
-      <ContentWrapper className="quiz">
-        <Card>
-          <TitleWrapper>
-            <Text textStyle="heading2" element="p">
-              Score: {score}
-            </Text>
-          </TitleWrapper>
-          <QuestionText>{currentQuestion?.questionText}</QuestionText>
-          {allowMultipleAnswers ? (
-            <QuestionText textStyle="italic" color="deemphasize">
-              Please select all that apply.
-            </QuestionText>
-          ) : null}
-          <AnswerOptionsWrap role="radiogroup" aria-labelledby="assistive">
-            <div id="assistive" style={{ display: 'none' }}>
-              Please choose your answer.
-            </div>
-            {currentQuestion.answerOptionList.map((option, index) => {
-              return (
-                <Input
-                  onClick={(value) =>
-                    optionClickHandler(
-                      value,
-                      selectedAnswers,
-                      allowMultipleAnswers,
-                      dispatch
-                    )
-                  }
-                  key={option?.id}
-                  value={option?.id}
-                  checked={selectedAnswers.includes(option.id)}
-                  disabled={status === 'correct' || status === 'incorrect'}
-                  id={option?.id}
-                >
-                  {option.answerText}
-                </Input>
-              );
-            })}
-          </AnswerOptionsWrap>
-          <FeedbackTextWrap>
-            {status === 'correct' ? (
-              <Text textStyle="feedback" color="success">
-                You got it right!
-              </Text>
-            ) : null}
-            {status === 'incorrect' || status === 'tryagain' ? (
-              <Text textStyle="feedback" color="failure">
-                You got it wrong ☹️
-              </Text>
-            ) : null}
-            {attemptCount > 1 ? (
-              <Text textStyle="italic" color="deemphasize">
-                Hint: {currentQuestion.hintText}
-              </Text>
-            ) : null}
-          </FeedbackTextWrap>
-          <ButtonWrap>
-            <InfoTextWrap>
-              <Text textStyle="italic" color="informational" element="p">
-                Attempt {attemptCount} / {currentQuestion.allowedAttemptCount}
-              </Text>
-              <Text
-                color={timeRemaining > 3 ? 'informational' : 'failure'}
-                element="p"
-              >
-                Timer: {timeRemaining}
-              </Text>
-            </InfoTextWrap>
-            <Button
-              disabled={isButtonDisabled(status)}
-              onClick={() =>
-                buttonClickHandler(status, dispatch, selectedAnswers)
-              }
+      <QuizContentWrapper className="quiz">
+        {questionList.map((question, index) => {
+          return (
+            <QuestionCard
+              className={`${index > currentIndex ? 'previous' : ''}${
+                index < currentIndex ? 'next' : ''
+              }${index === currentIndex ? 'current' : ''} `}
             >
-              {getButtonText(status, hasMoreQuestions)}
-            </Button>
-          </ButtonWrap>
-        </Card>
-      </ContentWrapper>
+              <TitleWrapper>
+                <Text textStyle="heading2" element="p">
+                  Score: {score}
+                </Text>
+              </TitleWrapper>
+              <QuestionText>{question?.questionText}</QuestionText>
+              {allowMultipleAnswers ? (
+                <QuestionText textStyle="italic" color="deemphasize">
+                  Please select all that apply.
+                </QuestionText>
+              ) : null}
+              <AnswerOptionsWrap role="radiogroup" aria-labelledby="assistive">
+                <div id="assistive" style={{ display: 'none' }}>
+                  Please choose your answer.
+                </div>
+                {question.answerOptionList.map((option, index) => {
+                  return (
+                    <Input
+                      onClick={(value) =>
+                        optionClickHandler(
+                          value,
+                          selectedAnswers,
+                          allowMultipleAnswers,
+                          dispatch
+                        )
+                      }
+                      key={option?.id}
+                      value={option?.id}
+                      checked={selectedAnswers.includes(option.id)}
+                      disabled={status === 'correct' || status === 'incorrect'}
+                      id={option?.id}
+                    >
+                      {option.answerText}
+                    </Input>
+                  );
+                })}
+              </AnswerOptionsWrap>
+              <FeedbackTextWrap>
+                {status === 'correct' ? (
+                  <Text textStyle="feedback" color="success">
+                    You got it right!
+                  </Text>
+                ) : null}
+                {status === 'incorrect' || status === 'tryagain' ? (
+                  <Text textStyle="feedback" color="failure">
+                    You got it wrong ☹️
+                  </Text>
+                ) : null}
+                {attemptCount > 1 ? (
+                  <Text textStyle="italic" color="deemphasize">
+                    Hint: {question.hintText}
+                  </Text>
+                ) : null}
+              </FeedbackTextWrap>
+              <ButtonWrap>
+                <InfoTextWrap>
+                  <Text textStyle="italic" color="informational" element="p">
+                    Attempt {attemptCount} / {question.allowedAttemptCount}
+                  </Text>
+                  <Text
+                    color={timeRemaining > 3 ? 'informational' : 'failure'}
+                    element="p"
+                  >
+                    Timer: {timeRemaining}
+                  </Text>
+                </InfoTextWrap>
+                <Button
+                  disabled={isButtonDisabled(status)}
+                  onClick={() =>
+                    buttonClickHandler(status, dispatch, selectedAnswers)
+                  }
+                >
+                  {getButtonText(status, hasMoreQuestions)}
+                </Button>
+              </ButtonWrap>
+            </QuestionCard>
+          );
+        })}
+      </QuizContentWrapper>
     </>
   );
 };

@@ -8,6 +8,7 @@ export const PageWrapper = styled('div')`
   justify-content: flex-start;
   background-color: ${theme.colors.expressive.neutral[20]};
   height: 100vh;
+  overflow-x: hidden;
 `;
 
 export const ContentWrapper = styled('main')`
@@ -28,13 +29,6 @@ export const ContentWrapper = styled('main')`
     align-items: initial;
   }
   &.quiz {
-    margin-top: -8rem;
+    margin-top: -4rem;
   }
-`;
-
-export const Card = styled('div')`
-  background-color: ${theme.colors.expressive.neutral[0]};
-  padding: 2.5rem 2rem;
-  border-radius: 5px;
-  box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.15);
 `;
