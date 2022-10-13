@@ -212,7 +212,7 @@ const Quiz: FC<{}> = () => {
   return (
     <>
       <Header title={`Question ${currentIndex + 1}/${questionList?.length}`} />
-      <ContentWrapper>
+      <ContentWrapper className="quiz">
         <Card>
           <TitleWrapper>
             <Text textStyle="heading2" element="p">

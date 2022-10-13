@@ -4,6 +4,8 @@ import { useNavigate, NavigateFunction } from 'react-router';
 import { ContentWrapper } from '../components/LayoutComponents';
 import Text from '../components/Text';
 import Button from '../components/Button';
+import Header from '../components/Header';
+import Card from '../components/Card';
 import theme from '../theme';
 import { Action, IScore } from '../../types';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -18,6 +20,7 @@ const messageList = [
   "I'm sure you have other talents.",
   "You'll get it next time!",
   'Hey! Pretty good!',
+  'Double Plus Good!',
   "You're a Trivia master!",
 ];
 
@@ -29,9 +32,25 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const StyledHeading = styled(Text)`
+  margin-top: 0.67rem;
+`;
+
 const formatDate = (timeStamp: number): string => {
   const date = new Date(timeStamp);
   return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+};
+
+const getTextColorByScore = (
+  score: number
+): 'failure' | 'success' | 'informational' => {
+  if (score <= 1) {
+    return 'failure';
+  } else if (score == 2 || score === 3) {
+    return 'informational';
+  } else {
+    return 'success';
+  }
 };
 
 /**
@@ -97,28 +116,30 @@ const Results: FC<{}> = () => {
   }, []);
 
   return (
-    <ContentWrapper>
-      <img
-        src="http://placekitten.com/200/300"
-        alt="Kitten photo"
-        width="200"
-        height="300"
-        style={{ margin: '0 auto' }}
-      />
-      <Text element="h1" textStyle="heading">
-        {messageList[score]}
-      </Text>
-      <Text>
-        You got {score} out of {questionList?.length} right!
-      </Text>
-      <Text>
-        You best score so far was {highScore.correct} out of {highScore.count}{' '}
-        which you got on {formatDate(highScore.timeStamp)}.
-      </Text>
-      <StyledButton onClick={() => clickHandler(dispatch, navigate)}>
-        Try Again!
-      </StyledButton>
-    </ContentWrapper>
+    <>
+      <Header title="Results" />
+      <ContentWrapper className="results">
+        <Card
+          imageUrl="http://placekitten.com/g/80/80"
+          imageAlt="A kitten to view your results."
+        >
+          <StyledHeading element="h2" textStyle="heading2">
+            {messageList[score]}
+          </StyledHeading>
+          <Text textStyle="italic" color={getTextColorByScore(score)}>
+            You got {score} out of {questionList?.length} right!
+          </Text>
+          <Text>
+            You best score so far was <strong>{highScore.correct}</strong> out
+            of <strong>{highScore.count}</strong> which you got on{' '}
+            <strong>{formatDate(highScore.timeStamp)}</strong>.
+          </Text>
+          <StyledButton onClick={() => clickHandler(dispatch, navigate)}>
+            Try Again!
+          </StyledButton>
+        </Card>
+      </ContentWrapper>
+    </>
   );
 };
 

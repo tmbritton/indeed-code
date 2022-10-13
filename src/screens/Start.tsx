@@ -36,7 +36,7 @@ const Start: FC<{}> = () => {
   return (
     <>
       <Header title="Start Quiz" />
-      <ContentWrapper>
+      <ContentWrapper className="start">
         <Card
           imageUrl="http://placekitten.com/80/80"
           imageAlt="A cute kitten image to start the quiz."

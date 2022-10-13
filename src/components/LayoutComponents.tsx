@@ -27,6 +27,9 @@ export const ContentWrapper = styled('main')`
     height: auto;
     align-items: initial;
   }
+  &.quiz {
+    margin-top: -8rem;
+  }
 `;
 
 export const Card = styled('div')`
